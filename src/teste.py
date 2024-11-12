@@ -15,16 +15,16 @@ pygame.display.set_caption("Lobby Soul Knight")
 WHITE = (255, 255, 255)
 
 # Carrega a imagem de fundo
-background = pygame.image.load("background.png")
+background = pygame.image.load("public/images/background.png")
 background = pygame.transform.scale(background, (screen_width, screen_height))
 
 # Carrega as imagens dos botões (estado normal e hover)
-megafone_img = pygame.image.load("som.png")
-megafone_hover_img = pygame.image.load("somHover.png")
-gear_img = pygame.image.load("settings.png")
-gear_hover_img = pygame.image.load("settingsHover.png")
-instagram_img = pygame.image.load("instagram.png")
-instagram_hover_img = pygame.image.load("instagramHover.png")
+megafone_img = pygame.image.load("public/images/som.png")
+megafone_hover_img = pygame.image.load("public/images/somHover.png")
+gear_img = pygame.image.load("public/images/settings.png")
+gear_hover_img = pygame.image.load("public/images/settingsHover.png")
+instagram_img = pygame.image.load("public/images/instagram.png")
+instagram_hover_img = pygame.image.load("public/images/instagramHover.png")
 
 # Redimensiona as imagens para o tamanho dos botões
 button_size = (60, 60)
@@ -40,7 +40,7 @@ title_font = pygame.font.Font(None, 74)  # Fonte maior para o título
 font = pygame.font.Font(None, 36)
 
 # Carrega o som de clique
-click_sound = pygame.mixer.Sound("aperta-ao-play-neymar.mp3")  # Substitua pelo caminho do seu som
+click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")  # Substitua pelo caminho do seu som
 
 # Função para desenhar texto
 def draw_text(text, font, color, surface, x, y):

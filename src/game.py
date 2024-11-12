@@ -10,7 +10,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.img = pygame.image.load('public/cain.png')
+        self.img = pygame.image.load('public/images/cain.png')
         self.img.set_colorkey((255, 255, 255))
         self.img_pos = [50, 0]
         self.movement = [False, False, False, False]
