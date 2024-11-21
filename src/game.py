@@ -11,6 +11,8 @@ class Game:
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
+        self.character_spritesheet = Spritesheet("public/images/coelho.png")
+        # self.terrain_spritesheet = Spritesheet("public/images/terrain.png")  colocar terreno
 
     def create_map(self):
         for i, row in enumerate(MAPA_1):
@@ -54,7 +56,7 @@ class Game:
         self.all_sprites.update()
         
     def draw(self):
-        self.screen.fill(BLACK)
+        self.screen.fill((255, 255, 255))
         self.all_sprites.draw(self.screen)
         self.clock.tick(60)
         pygame.display.update()
