@@ -12,11 +12,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
         self.character_spritesheet = Spritesheet("public/images/coelho.png")
-        # self.terrain_spritesheet = Spritesheet("public/images/terrain.png")  colocar terreno
+        self.terrain_spritesheet = Spritesheet("public/images/terrain.png")
 
     def create_map(self):
         for i, row in enumerate(MAPA_1):
             for j, column in enumerate(row):
+                Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
