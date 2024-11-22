@@ -34,7 +34,8 @@ gear_img = pygame.image.load("public/images/settings.png")
 gear_hover_img = pygame.image.load("public/images/settingsHover.png")
 instagram_img = pygame.image.load("public/images/instagram.png")
 instagram_hover_img = pygame.image.load("public/images/instagramHover.png")
-# imagem da seta para o botão de voltar
+
+# Carrega a imagem da seta para o botão de voltar
 back_arrow_img = pygame.image.load("public/images/settings.png")
 back_arrow_img = pygame.transform.scale(back_arrow_img, (40, 40))
 
@@ -51,6 +52,39 @@ def draw_text(text, font, color, surface, x, y):
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect(center=(x, y))
     surface.blit(text_obj, text_rect)
+
+# Função para desenhar texto justificado
+def draw_justified_text(text, font, color, surface, rect, line_height):
+    words = text.split(' ')
+    lines = []
+    current_line = words[0]
+
+    # Quebra o texto em linhas que caibam no retângulo
+    for word in words[1:]:
+        if font.size(current_line + ' ' + word)[0] <= rect.width:
+            current_line += ' ' + word
+        else:
+            lines.append(current_line)
+            current_line = word
+    lines.append(current_line)
+
+    # Desenha cada linha no retângulo
+    y = rect.top
+    for line in lines:
+        text_surface = font.render(line, True, color)
+        text_rect = text_surface.get_rect(midtop=(rect.centerx, y))
+        surface.blit(text_surface, text_rect)
+        y += line_height
+
+# Texto explicativo (Lorem Ipsum)
+instructions_text = (
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+    "Praesent volutpat nunc et ligula congue, nec tincidunt mi tincidunt. "
+    "1. Use as setas para mover o personagem. "
+    "2. Pressione espaço para interagir com objetos. "
+    "3. Complete os desafios para avançar de nível. "
+    "Boa sorte e divirta-se!"
+)
 
 # Função para criar botões
 def draw_button(screen, x, y, width, height, text, color, hover_color):
@@ -76,6 +110,7 @@ def game_lobby():
     instagram_button_rect = pygame.Rect(screen_width - 100, screen_height - 90, *button_size)
 
     settings_open = False
+    como_jogar = False
 
     running = True
     while running:
@@ -102,7 +137,7 @@ def game_lobby():
 
         if settings_open:
             pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
-            draw_text("Configurações", font, WHITE, screen, screen_width // 2, 180)
+            draw_text("Configurações", font, WHITE, screen, screen_width // 2, 170)
 
             # Botão de "Voltar" com a imagem da seta
             back_arrow_rect = pygame.Rect(210, 160, 40, 40)  # Posição da seta
@@ -113,11 +148,28 @@ def game_lobby():
                 settings_open = False
 
             if draw_button(screen, 250, 230, 300, 50, "COMO JOGAR?", BLACK, HOVER_GRAY):
-                print("Botão 'COMO JOGAR?' clicado")
+                como_jogar = True
+
             if draw_button(screen, 250, 300, 300, 50, "DIFICULDADE", BLACK, HOVER_GRAY):
                 print("Botão 'DIFICULDADE' clicado")
             if draw_button(screen, 250, 370, 300, 50, "CRÉDITOS", BLACK, HOVER_GRAY):
                 print("Botão 'CRÉDITOS' clicado")
+
+        if como_jogar:
+            # Exibe o retângulo e o texto explicativo justificado
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
+            draw_text("Como jogar?", font, WHITE, screen, screen_width // 2, 160)
+
+            text_rect = pygame.Rect(210, 200, 380, 200)
+            draw_justified_text(instructions_text, font, WHITE, screen, text_rect, line_height=30)
+
+            # Botão de "Voltar" com a imagem da seta
+            back_arrow_rect = pygame.Rect(210, 160, 40, 40)  # Posição da seta
+            screen.blit(back_arrow_img, back_arrow_rect)
+
+            # Detecta clique na área da seta
+            if back_arrow_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+                como_jogar = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
