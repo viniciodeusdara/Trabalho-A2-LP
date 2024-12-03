@@ -36,6 +36,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        self.health = 100
+        self.last_damage_time = 0
     
     def update(self):
         self.movement()
@@ -62,6 +64,16 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.y_change += PLAYER_SPEED
             self.facing = "down"
+            
+    def take_damage(self, amount):
+        """Reduz a saúde do jogador."""
+        self.health -= amount
+        if self.health <= 0:
+            self.die()
+
+    def die(self):
+        """Lógica para quando o jogador morrer."""
+        print("O jogador morreu!")
 
     def collide_blocks(self, direction):
         if direction == "x":
@@ -134,11 +146,23 @@ class Enemy(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-        self.speed = 2  # Velocidade do inimigo
+        self.speed = 2 
+        self.damage = 10
 
     def update(self):
         self.move_towards_player()
         self.handle_collisions()
+        self.avoid_overlap()
+        self.damage_player()
+
+    def damage_player(self):
+        """Causa dano ao jogador ao entrar em contato."""
+        if self.rect.colliderect(self.game.player.rect):
+            current_time = pygame.time.get_ticks()
+            # Controla para que o dano seja periódico (ex.: 1 segundo entre danos)
+            if current_time - self.game.player.last_damage_time > 1000:  # 1000 ms = 1 segundo
+                self.game.player.take_damage(self.damage)
+                self.game.player.last_damage_time = current_time
 
     def move_towards_player(self):
         player_pos = self.game.player.rect.center
@@ -162,12 +186,25 @@ class Enemy(pygame.sprite.Sprite):
         # Verificar colisões com blocos
         hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
         for block in hits:
-            # Corrigir a posição do inimigo
-            if self.rect.right > block.rect.left and self.rect.left < block.rect.left:
+            if self.rect.right >= block.rect.left and self.rect.left <= block.rect.left:
                 self.rect.right = block.rect.left
-            if self.rect.left < block.rect.right and self.rect.right > block.rect.right:
+            if self.rect.left <= block.rect.right and self.rect.right >= block.rect.right:
                 self.rect.left = block.rect.right
-            if self.rect.bottom > block.rect.top and self.rect.top < block.rect.top:
+            if self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.top:
                 self.rect.bottom = block.rect.top
-            if self.rect.top < block.rect.bottom and self.rect.bottom > block.rect.bottom:
+            if self.rect.top <= block.rect.bottom and self.rect.bottom >= block.rect.bottom:
                 self.rect.top = block.rect.bottom
+    
+    def avoid_overlap(self):
+        # Verificar colisões com outros inimigos
+        hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
+        for enemy in hits:
+            if enemy != self:  
+                if self.rect.right > enemy.rect.left and self.rect.left < enemy.rect.left:
+                    self.rect.right = enemy.rect.left
+                if self.rect.left < enemy.rect.right and self.rect.right > enemy.rect.right:
+                    self.rect.left = enemy.rect.right
+                if self.rect.bottom > enemy.rect.top and self.rect.top < enemy.rect.top:
+                    self.rect.bottom = enemy.rect.top
+                if self.rect.top < enemy.rect.bottom and self.rect.bottom > enemy.rect.bottom:
+                    self.rect.top = enemy.rect.bottom

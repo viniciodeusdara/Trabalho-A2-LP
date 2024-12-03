@@ -37,8 +37,7 @@ class Game:
         Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
         Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
         Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
-        
-
+    
     def new(self):
 
         self.playing = True
@@ -58,10 +57,32 @@ class Game:
                 
     def update(self):
         self.all_sprites.update()
+        self.check_player_health()
+
+    def check_player_health(self):
+        """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
+        if self.player.health <= 0:
+            self.playing = False
+
+    def draw_health_bar(self):
+        """Desenha a barra de saúde do jogador na tela."""
+        health = self.player.health
+        max_health = 100
+        bar_length = 200
+        bar_height = 20
+        fill = max(0, (health / max_health) * bar_length)  # Garante que não seja negativo
+        outline_rect = pygame.Rect(20, 20, bar_length, bar_height)
+        fill_rect = pygame.Rect(20, 20, fill, bar_height)
+
+        # Desenha a barra preenchida (vermelho)
+        pygame.draw.rect(self.screen, (255, 0, 0), fill_rect)
+        # Desenha o contorno da barra (branco)
+        pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
         
     def draw(self):
         self.screen.fill((255, 255, 255))
         self.all_sprites.draw(self.screen)
+        self.draw_health_bar()
         self.clock.tick(60)
         pygame.display.update()
 
