@@ -2,6 +2,7 @@ import pygame
 import sys
 from config import *
 from sprites import *
+from random import randint
 
 class Game:
     def __init__(self):  
@@ -26,8 +27,17 @@ class Game:
                     Block(self, j, i)
                 if column == "P":
                     self.player = Player(self, j, i)
-                if column == "E":
-                    Enemy(self, j, i)
+                
+
+        map_width = len(MAPA_1[0])
+        map_height = len(MAPA_1)
+
+        # Meio do lado superior
+        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
+        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
+        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
+        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
+        
 
     def new(self):
 

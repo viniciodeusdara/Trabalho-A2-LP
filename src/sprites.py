@@ -138,6 +138,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.move_towards_player()
+        self.handle_collisions()
 
     def move_towards_player(self):
         player_pos = self.game.player.rect.center
@@ -155,4 +156,18 @@ class Enemy(pygame.sprite.Sprite):
 
         # Mover o inimigo em direção ao jogador
         self.rect.x += direction_x * self.speed
-        self.rect.y += direction_y * self.speed   
+        self.rect.y += direction_y * self.speed  
+
+    def handle_collisions(self):
+        # Verificar colisões com blocos
+        hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+        for block in hits:
+            # Corrigir a posição do inimigo
+            if self.rect.right > block.rect.left and self.rect.left < block.rect.left:
+                self.rect.right = block.rect.left
+            if self.rect.left < block.rect.right and self.rect.right > block.rect.right:
+                self.rect.left = block.rect.right
+            if self.rect.bottom > block.rect.top and self.rect.top < block.rect.top:
+                self.rect.bottom = block.rect.top
+            if self.rect.top < block.rect.bottom and self.rect.bottom > block.rect.bottom:
+                self.rect.top = block.rect.bottom
