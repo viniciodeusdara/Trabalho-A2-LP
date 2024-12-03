@@ -49,6 +49,11 @@ class Player(pygame.sprite.Sprite):
 
         self.x_change = 0
         self.y_change = 0
+    
+    def attack(self):
+        """Cria um ataque na direção do jogador."""
+        x, y = self.rect.center
+        Attack(self.game, x, y, self.facing)
 
     def movement(self):
         keys = pygame.key.get_pressed()
@@ -64,7 +69,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.y_change += PLAYER_SPEED
             self.facing = "down"
-            
+
     def take_damage(self, amount):
         """Reduz a saúde do jogador."""
         self.health -= amount
@@ -147,6 +152,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
         self.speed = 2 
+        self.health = 50
         self.damage = 10
 
     def update(self):
@@ -154,6 +160,16 @@ class Enemy(pygame.sprite.Sprite):
         self.handle_collisions()
         self.avoid_overlap()
         self.damage_player()
+    
+    def take_damage(self, amount):
+        """Reduz a saúde do inimigo."""
+        self.health -= amount
+        if self.health <= 0:
+            self.die()
+
+    def die(self):
+        """Remove o inimigo ao morrer."""
+        self.kill()
 
     def damage_player(self):
         """Causa dano ao jogador ao entrar em contato."""
@@ -208,3 +224,63 @@ class Enemy(pygame.sprite.Sprite):
                     self.rect.bottom = enemy.rect.top
                 if self.rect.top < enemy.rect.bottom and self.rect.bottom > enemy.rect.bottom:
                     self.rect.top = enemy.rect.bottom
+
+class Attack(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, direction):
+        self.game = game
+        self._layer = PLAYER_LAYER
+        self.groups = self.game.all_sprites, self.game.attacks
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.spritesheet = self.game.attack_spritesheet  # Spritesheet do ataque
+
+        # Carregando quadros da animação
+        self.frames = self.load_frames()
+        self.current_frame = 0
+        self.image = self.frames[self.current_frame]  # Quadro inicial
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+        self.direction = direction
+        self.speed = 5  # Velocidade do ataque
+        self.animation_time = 50  # Tempo entre quadros (em ms)
+        self.last_update = pygame.time.get_ticks()  # Para controle de tempo
+
+    def load_frames(self):
+        """Carrega os quadros da animação do spritesheet."""
+        frames = []
+        for i in range(4):  # Número de quadros no spritesheet
+            frame = self.spritesheet.get_sprite(i * TILESIZE, 0, TILESIZE, TILESIZE)
+            frames.append(frame)
+        return frames
+
+    def animate(self):
+        """Atualiza o quadro da animação."""
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.animation_time:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+            self.image = self.frames[self.current_frame]
+
+    def update(self):
+        self.animate()
+
+        # Movimento do ataque na direção
+        if self.direction == "up":
+            self.rect.y -= self.speed
+        elif self.direction == "down":
+            self.rect.y += self.speed
+        elif self.direction == "left":
+            self.rect.x -= self.speed
+        elif self.direction == "right":
+            self.rect.x += self.speed
+
+        # Remover o ataque se sair da tela
+        if (self.rect.x < 0 or self.rect.x > WIN_WIDTH or
+                self.rect.y < 0 or self.rect.y > WIN_HEIGHT):
+            self.kill()
+
+        # Verificar colisão com inimigos
+        hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
+        for enemy in hits:
+            enemy.take_damage(10)  # Causa 10 de dano ao inimigo
+            self.kill()  # Remove o ataque após o impacto

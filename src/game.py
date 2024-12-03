@@ -11,10 +11,11 @@ class Game:
         pygame.display.set_caption("COLOCAR NOME DO JOGO")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.running = True
+        self.running = True 
         self.character_spritesheet = Spritesheet("public/images/coelho.png")
         self.terrain_spritesheet = Spritesheet("public/images/terrain.png")
         self.enemy_spritesheet = Spritesheet("public/images/enemy.png")
+        self.attack_spritesheet = Spritesheet("public/images/attack.png")
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
@@ -54,6 +55,9 @@ class Game:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:  # Barra de espaço para atacar
+                    self.player.attack()       
                 
     def update(self):
         self.all_sprites.update()
