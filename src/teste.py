@@ -57,33 +57,41 @@ def draw_text(text, font, color, surface, x, y):
     text_rect = text_obj.get_rect(center=(x, y))
     surface.blit(text_obj, text_rect)
 
-# Função para desenhar texto justificado
-def draw_justified_text(text, font, color, surface, rect, line_height):
-    words = text.split(' ')
+# Função para desenhar texto com quebra de linha automática
+def draw_wrapped_text_with_numbers(text, font, color, surface, rect, line_height):
     lines = []
-    current_line = words[0]
-
-    # Quebra o texto em linhas que caibam no retângulo
-    for word in words[1:]:
-        if font.size(current_line + ' ' + word)[0] <= rect.width:
-            current_line += ' ' + word
+    current_line = ""
+    
+    words = text.split(' ')
+    
+    # Quebra o texto em linhas que cabem no retângulo
+    for word in words:
+        # Verifica se o word é um número com ponto, como "1.", "2.", etc ou "Boa", que é o começo da frase final
+        if (word[0].isdigit() and word[1] == ".") or (word[0:3]=="Boa"):
+            if current_line:  # Se já houver texto na linha, armazena e começa uma nova linha
+                lines.append(current_line)
+            current_line = word  # Inicia uma nova linha com o número
         else:
-            lines.append(current_line)
-            current_line = word
-    lines.append(current_line)
+            # Se o texto já cabe na linha, adiciona a palavra
+            if font.size(current_line + ' ' + word)[0] <= rect.width:
+                current_line += ' ' + word
+            else:
+                if current_line:
+                    lines.append(current_line)
+                current_line = word  # Inicia uma nova linha com a palavra que não cabe
 
-    # Desenha cada linha no retângulo
+    if current_line:
+        lines.append(current_line)
+    
+    # Desenha o texto linha por linha
     y = rect.top
     for line in lines:
         text_surface = font.render(line, True, color)
-        text_rect = text_surface.get_rect(midtop=(rect.centerx, y))
-        surface.blit(text_surface, text_rect)
+        screen.blit(text_surface, (rect.left, y))
         y += line_height
 
-# Texto explicativo (Lorem Ipsum)
+# Texto explicativo (Como Jogar)
 instructions_text = (
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-    "Praesent volutpat nunc et ligula congue, nec tincidunt mi tincidunt. "
     "1. Use as setas para mover o personagem. "
     "2. Pressione espaço para interagir com objetos. "
     "3. Complete os desafios para avançar de nível. "
@@ -160,12 +168,13 @@ def game_lobby():
                 print("Botão 'CRÉDITOS' clicado")
 
         if como_jogar:
-            # Exibe o retângulo e o texto explicativo justificado
+            # Exibe o retângulo e o texto explicativo
             pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
             draw_text("Como jogar?", font, WHITE, screen, screen_width // 2, 160)
 
+            # Rect onde o texto será desenhado
             text_rect = pygame.Rect(210, 200, 380, 200)
-            draw_justified_text(instructions_text, font, WHITE, screen, text_rect, line_height=30)
+            draw_wrapped_text_with_numbers(instructions_text, font, WHITE, screen, text_rect, 30)
 
             # Botão de "Voltar" com a imagem da seta
             back_arrow_rect = pygame.Rect(210, 160, 40, 40)  # Posição da seta
@@ -184,18 +193,19 @@ def game_lobby():
                 elif config_button_rect.collidepoint(event.pos):
                     settings_open = True
                 elif instagram_button_rect.collidepoint(event.pos):
-                    webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==")
+                    webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw")
 
-                # Verifica se o clique foi fora dos botões
-                if not sound_button_rect.collidepoint(event.pos) and not config_button_rect.collidepoint(event.pos) and not instagram_button_rect.collidepoint(event.pos):
-                    click_sound.play()  # Toca o som
-                    time.sleep(4.5)
-                    click_sound.stop()
+        # Atualiza a tela
+        pygame.display.update()
 
-        pygame.display.flip()
+        # Controla o FPS (quadros por segundo)
+        pygame.time.Clock().tick(60)
 
-    pygame.quit()
-    sys.exit()
+# Inicia o lobby do
 
-# Executa a tela do lobby
+# Inicia o lobby do jogo
 game_lobby()
+
+# Finaliza o Pygame
+pygame.quit()
+sys.exit()
