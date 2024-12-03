@@ -1,6 +1,7 @@
 import pygame
 import sys
 import webbrowser
+import time
 
 # Inicializa o Pygame
 pygame.init()
@@ -46,6 +47,9 @@ gear_img = pygame.transform.scale(gear_img, button_size)
 gear_hover_img = pygame.transform.scale(gear_hover_img, button_size)
 instagram_img = pygame.transform.scale(instagram_img, button_size)
 instagram_hover_img = pygame.transform.scale(instagram_hover_img, button_size)
+
+# Carrega o som
+click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")  # Substitua com o caminho do seu som
 
 # Função para desenhar texto
 def draw_text(text, font, color, surface, x, y):
@@ -181,6 +185,12 @@ def game_lobby():
                     settings_open = True
                 elif instagram_button_rect.collidepoint(event.pos):
                     webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==")
+
+                # Verifica se o clique foi fora dos botões
+                if not sound_button_rect.collidepoint(event.pos) and not config_button_rect.collidepoint(event.pos) and not instagram_button_rect.collidepoint(event.pos):
+                    click_sound.play()  # Toca o som
+                    time.sleep(4.5)
+                    click_sound.stop()
 
         pygame.display.flip()
 
