@@ -9,7 +9,7 @@ pygame.init()
 # Dimensões da tela
 screen_width, screen_height = 800, 600
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Lobby Soul Knight")
+pygame.display.set_caption("Lobby do jogo")
 
 # Cores
 WHITE = (255, 255, 255)
@@ -115,20 +115,19 @@ def draw_button(screen, x, y, width, height, text, color, hover_color):
     screen.blit(text_render, text_rect)
     return False
 
+# Default para dificuldade
+dificuldade_escolhida="Fácil"
+
 # Função principal para o lobby
 def game_lobby():
     sound_button_rect = pygame.Rect(50, 300, *button_size)
     config_button_rect = pygame.Rect(50, 370, *button_size)
     instagram_button_rect = pygame.Rect(screen_width - 100, screen_height - 90, *button_size)
 
+    # Administração das variáveis
     settings_open = False
     como_jogar = False
     dificuldade = False
-    dificuldade_escolhida="Fácil"
-
-    # Variáveis de controle de delay
-    last_click_time = 0  # Armazena o tempo do último clique
-    cooldown = 1000  # Cooldown de 500ms (meio segundo)
 
     running = True
     while running:
@@ -155,7 +154,7 @@ def game_lobby():
             screen.blit(instagram_img, instagram_button_rect)
 
         if settings_open:
-            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))   # Molde de onde os elementos ficam 
             draw_text("Configurações", font, WHITE, screen, screen_width // 2, 170)
 
             # Botão de "Voltar" com a imagem da seta
@@ -181,7 +180,7 @@ def game_lobby():
             settings_open = False
             como_jogar = False
             
-            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300)) # Molde de onde os elementos ficam 
             draw_text("Configurações", font, WHITE, screen, screen_width // 2, 170)
 
             # Botão de "Voltar" com a imagem da seta
@@ -197,15 +196,14 @@ def game_lobby():
                 tempo_decorrido = tempo_agora - start_time
                 if tempo_decorrido > 2:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Fácil"
-                    print(1)
                     dificuldade = False
 
             if draw_button(screen, 250, 300, 300, 50, "Médio", BLACK, HOVER_GRAY):
+                # Como este botão e o botão de dificuldade estão na mesma posição estava dando problema de ao clicar em um, o outro ser clicado automático, por isso, há a adição de um marcador de tempo para evitar isso
                 tempo_agora = time.time()
                 tempo_decorrido = tempo_agora - start_time
                 if tempo_decorrido > 2:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Médio"
-                    print(2)
                     dificuldade = False
 
             if draw_button(screen, 250, 370, 300, 50, "Difícil", BLACK, HOVER_GRAY):
@@ -213,7 +211,6 @@ def game_lobby():
                 tempo_decorrido = tempo_agora - start_time
                 if tempo_decorrido > 2:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Difícil"
-                    print(3)
                     dificuldade = False
 
 
@@ -223,7 +220,7 @@ def game_lobby():
             dificuldade = False
 
             # Exibe o retângulo e o texto explicativo
-            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300)) # Molde de onde os elementos ficam 
             draw_text("Como jogar?", font, WHITE, screen, screen_width // 2, 160)
 
             # Rect onde o texto será desenhado
@@ -237,8 +234,8 @@ def game_lobby():
             # Detecta clique na área da seta
             if back_arrow_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
                 como_jogar = False
-        
 
+        # Análise dos eventos (cliques) ocorridos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -249,13 +246,12 @@ def game_lobby():
                     settings_open = True
                 elif instagram_button_rect.collidepoint(event.pos):
                     webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw")
+        
         # Atualiza a tela
         pygame.display.update()
 
         # Controla o FPS (quadros por segundo)
         pygame.time.Clock().tick(60)
-
-# Inicia o lobby do
 
 # Inicia o lobby do jogo
 game_lobby()
