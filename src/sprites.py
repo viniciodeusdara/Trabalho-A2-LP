@@ -121,3 +121,38 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = ENEMY_LAYER
+        self.groups = self.game.all_sprites, self.game.enemies
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.image = self.game.enemy_spritesheet.get_sprite(0, 0, TILESIZE, TILESIZE)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        self.speed = 2  # Velocidade do inimigo
+
+    def update(self):
+        self.move_towards_player()
+
+    def move_towards_player(self):
+        player_pos = self.game.player.rect.center
+        enemy_pos = self.rect.center
+
+        # Calcular a direção do movimento
+        direction_x = player_pos[0] - enemy_pos[0]
+        direction_y = player_pos[1] - enemy_pos[1]
+
+        # Normalizar o vetor de direção
+        distance = (direction_x**2 + direction_y**2) ** 0.5
+        if distance != 0:
+            direction_x /= distance
+            direction_y /= distance
+
+        # Mover o inimigo em direção ao jogador
+        self.rect.x += direction_x * self.speed
+        self.rect.y += direction_y * self.speed   

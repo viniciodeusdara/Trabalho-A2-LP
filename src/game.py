@@ -13,6 +13,10 @@ class Game:
         self.running = True
         self.character_spritesheet = Spritesheet("public/images/coelho.png")
         self.terrain_spritesheet = Spritesheet("public/images/terrain.png")
+        self.enemy_spritesheet = Spritesheet("public/images/enemy.png")
+        self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.enemies = pygame.sprite.Group()
+        self.player = Player(self, 5, 5)
 
     def create_map(self):
         for i, row in enumerate(MAPA_1):
@@ -21,7 +25,9 @@ class Game:
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
-                    Player(self, j, i)
+                    self.player = Player(self, j, i)
+                if column == "E":
+                    Enemy(self, j, i)
 
     def new(self):
 
