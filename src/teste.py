@@ -132,7 +132,6 @@ def game_lobby():
 
     running = True
     while running:
-        current_time = pygame.time.get_ticks()  # Tempo atual em milissegundos
 
         screen.blit(background, (0, 0))
         draw_text("THE GAME", title_font, WHITE, screen, screen_width // 2, 100)
@@ -171,6 +170,7 @@ def game_lobby():
                 como_jogar = True
 
             if draw_button(screen, 250, 300, 300, 50, "DIFICULDADE", BLACK, HOVER_GRAY):
+                start_time = time.time()
                 dificuldade = True
 
             if draw_button(screen, 250, 370, 300, 50, "CRÉDITOS", BLACK, HOVER_GRAY):
@@ -193,24 +193,27 @@ def game_lobby():
                 dificuldade = False
 
             if draw_button(screen, 250, 230, 300, 50, "Fácil", BLACK, HOVER_GRAY):
-                if current_time - last_click_time > cooldown:  # Verifica se o cooldown passou
+                tempo_agora = time.time()
+                tempo_decorrido = tempo_agora - start_time
+                if tempo_decorrido > 2:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Fácil"
                     print(1)
-                    last_click_time = current_time  # Atualiza o tempo do último clique
                     dificuldade = False
 
             if draw_button(screen, 250, 300, 300, 50, "Médio", BLACK, HOVER_GRAY):
-                if (current_time - last_click_time) > cooldown:  # Verifica se o cooldown passou
+                tempo_agora = time.time()
+                tempo_decorrido = tempo_agora - start_time
+                if tempo_decorrido > 2:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Médio"
                     print(2)
-                    last_click_time = current_time  # Atualiza o tempo do último clique
                     dificuldade = False
 
             if draw_button(screen, 250, 370, 300, 50, "Difícil", BLACK, HOVER_GRAY):
-                if current_time - last_click_time > cooldown:  # Verifica se o cooldown passou
+                tempo_agora = time.time()
+                tempo_decorrido = tempo_agora - start_time
+                if tempo_decorrido > 2:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Difícil"
                     print(3)
-                    last_click_time = current_time  # Atualiza o tempo do último clique
                     dificuldade = False
 
 
