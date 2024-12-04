@@ -194,7 +194,7 @@ def game_lobby():
             if draw_button(screen, 250, 230, 300, 50, "Fácil", BLACK, HOVER_GRAY):
                 tempo_agora = time.time()
                 tempo_decorrido = tempo_agora - start_time
-                if tempo_decorrido > 2:  # Verifica se o cooldown passou
+                if tempo_decorrido > 1:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Fácil"
                     dificuldade = False
 
@@ -202,14 +202,14 @@ def game_lobby():
                 # Como este botão e o botão de dificuldade estão na mesma posição estava dando problema de ao clicar em um, o outro ser clicado automático, por isso, há a adição de um marcador de tempo para evitar isso
                 tempo_agora = time.time()
                 tempo_decorrido = tempo_agora - start_time
-                if tempo_decorrido > 2:  # Verifica se o cooldown passou
+                if tempo_decorrido > 1:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Médio"
                     dificuldade = False
 
             if draw_button(screen, 250, 370, 300, 50, "Difícil", BLACK, HOVER_GRAY):
                 tempo_agora = time.time()
                 tempo_decorrido = tempo_agora - start_time
-                if tempo_decorrido > 2:  # Verifica se o cooldown passou
+                if tempo_decorrido > 1:  # Verifica se o cooldown passou
                     dificuldade_escolhida = "Difícil"
                     dificuldade = False
 
