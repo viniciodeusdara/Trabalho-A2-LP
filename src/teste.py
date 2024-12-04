@@ -9,7 +9,7 @@ pygame.init()
 # Dimensões da tela
 screen_width, screen_height = 800, 600
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Lobby Soul Knight")
+pygame.display.set_caption("Lobby do jogo")
 
 # Cores
 WHITE = (255, 255, 255)
@@ -115,6 +115,8 @@ def draw_button(screen, x, y, width, height, text, color, hover_color):
     screen.blit(text_render, text_rect)
     return False
 
+# Default para dificuldade
+dificuldade_escolhida="Fácil"
 
 # Função principal para o lobby
 def game_lobby():
@@ -122,40 +124,37 @@ def game_lobby():
     config_button_rect = pygame.Rect(50, 370, *button_size)
     instagram_button_rect = pygame.Rect(screen_width - 100, screen_height - 90, *button_size)
 
+    # Administração das variáveis
     settings_open = False
     como_jogar = False
     dificuldade = False
-    dificuldade_escolhida = "Fácil"
 
     running = True
     while running:
+
         screen.blit(background, (0, 0))
         draw_text("THE GAME", title_font, WHITE, screen, screen_width // 2, 100)
         draw_text("Toque para iniciar", font, WHITE, screen, screen_width // 2, screen_height - 50)
 
         mouse_pos = pygame.mouse.get_pos()
-        mouse_click = pygame.mouse.get_pressed()
 
-        # Verifica se o mouse está sobre o botão de som
         if sound_button_rect.collidepoint(mouse_pos):
             screen.blit(megafone_hover_img, sound_button_rect)
         else:
             screen.blit(megafone_img, sound_button_rect)
 
-        # Verifica se o mouse está sobre o botão de configurações
         if config_button_rect.collidepoint(mouse_pos):
             screen.blit(gear_hover_img, config_button_rect)
         else:
             screen.blit(gear_img, config_button_rect)
 
-        # Verifica se o mouse está sobre o botão do Instagram
         if instagram_button_rect.collidepoint(mouse_pos):
             screen.blit(instagram_hover_img, instagram_button_rect)
         else:
             screen.blit(instagram_img, instagram_button_rect)
 
         if settings_open:
-            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))   # Molde de onde os elementos ficam 
             draw_text("Configurações", font, WHITE, screen, screen_width // 2, 170)
 
             # Botão de "Voltar" com a imagem da seta
@@ -170,21 +169,19 @@ def game_lobby():
                 como_jogar = True
 
             if draw_button(screen, 250, 300, 300, 50, "DIFICULDADE", BLACK, HOVER_GRAY):
+                start_time = time.time()
                 dificuldade = True
 
             if draw_button(screen, 250, 370, 300, 50, "CRÉDITOS", BLACK, HOVER_GRAY):
                 print("Botão 'CRÉDITOS' clicado")
 
-        if como_jogar:
-            # Exibe o retângulo e o texto explicativo
-            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
-            draw_text("Instruções", font, WHITE, screen, screen_width // 2, 170)
-            draw_wrapped_text_with_numbers(instructions_text, font, WHITE, screen, pygame.Rect(210, 230, 380, 180), 40)
-
         if dificuldade:
-            # Exibe a tela de escolha de dificuldade
-            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300))  # Retângulo centralizado
-            draw_text("Escolha a Dificuldade", font, WHITE, screen, screen_width // 2, 170)
+            
+            settings_open = False
+            como_jogar = False
+            
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300)) # Molde de onde os elementos ficam 
+            draw_text("Configurações", font, WHITE, screen, screen_width // 2, 170)
 
             # Botão de "Voltar" com a imagem da seta
             back_arrow_rect = pygame.Rect(210, 160, 40, 40)  # Posição da seta
@@ -192,51 +189,73 @@ def game_lobby():
 
             # Detecta clique na área da seta
             if back_arrow_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
-                settings_open = False
+                dificuldade = False
 
-            # Botão FÁCIL
-            if draw_button(screen, 250, 230, 300, 50, "FÁCIL", BLACK, HOVER_GRAY):
-                dificuldade_escolhida = "Fácil"
-                print("Dificuldade escolhida: Fácil")
+            if draw_button(screen, 250, 230, 300, 50, "Fácil", BLACK, HOVER_GRAY):
+                tempo_agora = time.time()
+                tempo_decorrido = tempo_agora - start_time
+                if tempo_decorrido > 1:  # Verifica se o cooldown passou
+                    dificuldade_escolhida = "Fácil"
+                    dificuldade = False
 
-            # Botão MÉDIO
-            if draw_button(screen, 250, 300, 300, 50, "MÉDIO", BLACK, HOVER_GRAY):
-                dificuldade_escolhida = "Médio"
-                print("Dificuldade escolhida: Médio")
+            if draw_button(screen, 250, 300, 300, 50, "Médio", BLACK, HOVER_GRAY):
+                # Como este botão e o botão de dificuldade estão na mesma posição estava dando problema de ao clicar em um, o outro ser clicado automático, por isso, há a adição de um marcador de tempo para evitar isso
+                tempo_agora = time.time()
+                tempo_decorrido = tempo_agora - start_time
+                if tempo_decorrido > 1:  # Verifica se o cooldown passou
+                    dificuldade_escolhida = "Médio"
+                    dificuldade = False
 
-            # Botão DIFÍCIL
-            if draw_button(screen, 250, 370, 300, 50, "DIFÍCIL", BLACK, HOVER_GRAY):
-                dificuldade_escolhida = "Difícil"
-                print("Dificuldade escolhida: Difícil")
+            if draw_button(screen, 250, 370, 300, 50, "Difícil", BLACK, HOVER_GRAY):
+                tempo_agora = time.time()
+                tempo_decorrido = tempo_agora - start_time
+                if tempo_decorrido > 1:  # Verifica se o cooldown passou
+                    dificuldade_escolhida = "Difícil"
+                    dificuldade = False
 
-            
-        # Verifica se clicaram no botão de som
-        if sound_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
-            pass
 
-        # Verifica se clicaram no botão de configurações
-        if config_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
-            settings_open = True
+        if como_jogar:
 
-        # Verifica se clicaram no botão do Instagram
-        if instagram_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
-            webbrowser.open("https://www.instagram.com")  # Substitua pela URL correta
+            settings_open = False
+            dificuldade = False
 
-        # Toca o som apenas se clicado fora dos botões
-        if not (sound_button_rect.collidepoint(mouse_pos) or 
-                config_button_rect.collidepoint(mouse_pos) or 
-                instagram_button_rect.collidepoint(mouse_pos)):
-            if mouse_click[0]:
-                click_sound.play()
-                return dificuldade_escolhida
+            # Exibe o retângulo e o texto explicativo
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300)) # Molde de onde os elementos ficam 
+            draw_text("Como jogar?", font, WHITE, screen, screen_width // 2, 160)
 
+            # Rect onde o texto será desenhado
+            text_rect = pygame.Rect(210, 200, 380, 200)
+            draw_wrapped_text_with_numbers(instructions_text, font, WHITE, screen, text_rect, 30)
+
+            # Botão de "Voltar" com a imagem da seta
+            back_arrow_rect = pygame.Rect(210, 160, 40, 40)  # Posição da seta
+            screen.blit(back_arrow_img, back_arrow_rect)
+
+            # Detecta clique na área da seta
+            if back_arrow_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+                como_jogar = False
+
+        # Análise dos eventos (cliques) ocorridos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if sound_button_rect.collidepoint(event.pos):
+                    print("Botão de som clicado")
+                elif config_button_rect.collidepoint(event.pos):
+                    settings_open = True
+                elif instagram_button_rect.collidepoint(event.pos):
+                    webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw")
+                else:
+                    click_sound.play()
+                    time.sleep(4.5)
+                    click_sound.stop()
+
+        # Atualiza a tela
         pygame.display.update()
 
-        # Checagem de eventos para fechar a janela
         # Controla o FPS (quadros por segundo)
         pygame.time.Clock().tick(60)
-
-# Inicia o lobby do
 
 # Inicia o lobby do jogo
 game_lobby()
