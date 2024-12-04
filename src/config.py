@@ -4,9 +4,10 @@ TILESIZE = 32
 
 PLAYER_SPEED = 3
 
-PLAYER_LAYER = 3
+PLAYER_LAYER = 4
 BLOCK_LAYER = 2
 GROUND_LAYER = 1
+ENEMY_LAYER = 3
 
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
@@ -24,7 +25,7 @@ MAPA_1 = [
     "B..................B",
     "B..................B",
     "B..................B",
-    "B.....BBB..........B",
+    "B.....BBB.....E....B",
     "B.....B............B",
     "B.....B............B",
     "B..................B",
