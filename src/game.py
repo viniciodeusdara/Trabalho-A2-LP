@@ -22,7 +22,6 @@ def game_lobby():
     while running:
         # Desenha a imagem de fundo
         screen.blit(background_image, (0, 0))
-
         # Desenha o título
         title_text = font.render("Escape the Matrix!", True, (0, 0, 0))
         title_rect = title_text.get_rect(center=(WIN_WIDTH // 2, 100))
@@ -122,7 +121,6 @@ class Game:
         # Spawnar inimigos da horda
         if self.current_horde * self.enemies_per_horde <= 25:
             for _ in range(self.current_horde * self.enemies_per_horde):
-                time.sleep(0.5)
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
         else:
             for _ in range(25):
