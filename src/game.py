@@ -19,6 +19,10 @@ class Game:
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
+        self.current_horde = 1
+        self.enemies_per_horde = 10
+        self.horde_cleared = False
+        self.horde_message_time = 0
 
     def create_map(self):
         for i, row in enumerate(MAPA_1):
@@ -26,28 +30,50 @@ class Game:
                 Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
-                if column == "P":
+            # Não recrie o jogador se ele já existir
+                if column == "P" and not hasattr(self, 'player'):
                     self.player = Player(self, j, i)
-                
 
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
 
-        # Meio do lado superior
-        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
-        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
-        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
-        Enemy(self, randint(1, map_width - 1), randint(1, map_height-1))
+    # Spawnar inimigos da horda
+        for _ in range(self.enemies_per_horde):
+            Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1))
     
-    def new(self):
+    def check_horde_status(self):
+        if not self.enemies and not self.horde_cleared:
+            self.horde_cleared = True
+            self.horde_message_time = pygame.time.get_ticks()
 
+    def spawn_next_horde(self):
+        current_time = pygame.time.get_ticks()
+        if self.horde_cleared and current_time - self.horde_message_time > 2000:  # Exibe a mensagem por 2 segundos
+            self.horde_cleared = False
+            self.current_horde += 1
+            self.enemies_per_horde += 5  # Aumenta a dificuldade
+            self.create_map()
+    
+    def draw_horde_message(self):
+        if self.horde_cleared:
+            font = pygame.font.Font(None, 50)
+            text = font.render("Horda Eliminada! Próxima Horda...", True, (0, 0, 0))
+            text_rect = text.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2))
+            self.screen.blit(text, text_rect)
+
+    def new(self):
         self.playing = True
 
+    # Reinitialize apenas os grupos necessários
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
 
+    # Adicione o jogador ao grupo de sprites
+        self.all_sprites.add(self.player)
+
+    # Crie o mapa e os inimigos
         self.create_map()
 
     def events(self):
@@ -63,6 +89,9 @@ class Game:
     def update(self):
         self.all_sprites.update()
         self.check_player_health()
+        self.check_horde_status()
+        self.spawn_next_horde()
+
 
     def check_player_health(self):
         """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
@@ -88,6 +117,7 @@ class Game:
         self.screen.fill((255, 255, 255))
         self.all_sprites.draw(self.screen)
         self.draw_health_bar()
+        self.draw_horde_message()
         self.clock.tick(60)
         pygame.display.update()
 
