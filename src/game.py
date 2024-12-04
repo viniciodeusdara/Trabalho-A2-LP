@@ -92,9 +92,13 @@ class Game:
 
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
-
-        for _ in range(self.current_horde * self.enemies_per_horde):
-            Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1))
+        
+        if self.current_horde * self.enemies_per_horde <= 25:
+            for _ in range(self.current_horde * self.enemies_per_horde):
+                Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1))
+        else:
+            for _ in range(25):
+                Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1))
 
     def create_map_2(self):
         for i, row in enumerate(MAPA_2):
