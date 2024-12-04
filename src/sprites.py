@@ -240,21 +240,19 @@ class Enemy(pygame.sprite.Sprite):
     # Verificar colisões com outros inimigos
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            if enemy != self:  # Garantir que não estamos comparando o inimigo com ele mesmo
-                # Calcular deslocamentos no eixo X e Y
+            if enemy != self:
                 dx = self.rect.centerx - enemy.rect.centerx
                 dy = self.rect.centery - enemy.rect.centery
 
-                # Determinar o lado predominante da sobreposição
-                if abs(dx) > abs(dy):  # Sobreposição no eixo X (horizontal)
-                    if dx > 0:  # Movendo da direita para a esquerda
+                if abs(dx) > abs(dy):
+                    if dx > 0:
                         self.rect.left = enemy.rect.right
-                    else:  # Movendo da esquerda para a direita
+                    else:
                         self.rect.right = enemy.rect.left
-                else:  # Sobreposição no eixo Y (vertical)
-                    if dy > 0:  # Movendo de baixo para cima
+                else:
+                    if dy > 0:
                         self.rect.top = enemy.rect.bottom
-                    else:  # Movendo de cima para baixo
+                    else:
                         self.rect.bottom = enemy.rect.top
 
 
