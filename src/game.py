@@ -141,6 +141,18 @@ class Game:
                 self.create_map_2()
             elif self.current_horde != 2:
                 self.create_map()
+            if self.current_horde == 6:  # Boss após a 5ª horda
+                self.spawn_boss()
+
+    def spawn_boss(self):
+        map_width = len(MAPA_1[0])
+        map_height = len(MAPA_1)
+    # Crie o Boss em um local aleatório no mapa
+        x = randint(1, map_width - 1)
+        y = randint(1, map_height - 1)
+        self.boss = Boss(self, x, y)  # Cria o Boss
+        self.all_sprites.add(self.boss)
+        self.enemies.add(self.boss)
 
     def draw_horde_message(self):
         if self.horde_cleared:
@@ -179,6 +191,10 @@ class Game:
         self.check_horde_status()
         self.spawn_next_horde()
 
+    # Se houver um boss, atualizar ele também
+        if hasattr(self, 'boss'):
+            self.boss.update()
+
     def check_player_health(self):
         """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
         if self.player.health <= 0:
@@ -198,12 +214,28 @@ class Game:
         pygame.draw.rect(self.screen, (255, 0, 0), fill_rect)
         # Desenha o contorno da barra (branco)
         pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
+    
+    def draw_boss_health(self):
+        if hasattr(self, 'boss'):
+            health = self.boss.health
+            max_health = 500
+            bar_length = 400
+            bar_height = 20
+            fill = max(0, (health / max_health) * bar_length)  # Garante que não seja negativo
+            outline_rect = pygame.Rect(WIN_WIDTH // 2 - bar_length // 2, 20, bar_length, bar_height)
+            fill_rect = pygame.Rect(WIN_WIDTH // 2 - bar_length // 2, 20, fill, bar_height)
+
+            # Desenha a barra preenchida (vermelho)
+            pygame.draw.rect(self.screen, (255, 0, 0), fill_rect)
+            # Desenha o contorno da barra (branco)
+            pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
 
     def draw(self):
         self.screen.fill((255, 255, 255))
         self.all_sprites.draw(self.screen)
         self.draw_health_bar()
         self.draw_horde_message()
+        self.draw_boss_health()  # Desenha a barra de saúde do Boss, se existir
         self.clock.tick(60)
         pygame.display.update()
 

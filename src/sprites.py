@@ -311,3 +311,27 @@ class Attack(pygame.sprite.Sprite):
         # Remover o ataque após o tempo de vida
         if pygame.time.get_ticks() - self.creation_time > self.lifespan:
             self.kill()
+
+class Boss(Enemy):
+    def __init__(self, game, x, y):
+        super().__init__(game, x, y, current_horde=0)  # No caso, não usamos horda para o Boss
+        self.health = 500  # Saúde do Boss
+        self.damage = 50   # Dano do Boss
+        self.speed = 1     # Velocidade reduzida, pois é um boss
+        self.image = self.game.enemy_spritesheet.get_sprite(0, 0, TILESIZE * 2, TILESIZE * 2)  # Boss será maior
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+    def special_attack(self):
+        """O boss pode ter um ataque especial."""
+        if random.random() < 0.01:  # Ataque especial com uma chance baixa
+            print("O Boss realizou um ataque especial!")
+            # Aqui você pode criar um novo ataque, efeito visual ou outro comportamento.
+
+    def update(self):
+        self.move_towards_player()
+        self.handle_collisions()
+        self.avoid_overlap()
+        self.damage_player()
+        self.special_attack()  # Chama o ataque especial do Boss
