@@ -219,29 +219,44 @@ class Enemy(pygame.sprite.Sprite):
     def handle_collisions(self):
         # Verificar colisões com blocos
         hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+
         for block in hits:
-            if self.rect.right >= block.rect.left and self.rect.left <= block.rect.left:
-                self.rect.right = block.rect.left
-            if self.rect.left <= block.rect.right and self.rect.right >= block.rect.right:
-                self.rect.left = block.rect.right
-            if self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.top:
-                self.rect.bottom = block.rect.top
-            if self.rect.top <= block.rect.bottom and self.rect.bottom >= block.rect.bottom:
-                self.rect.top = block.rect.bottom
+            dx = self.rect.centerx - block.rect.centerx
+            dy = self.rect.centery - block.rect.centery
+            
+            if abs(dx) > abs(dy):
+                if dx > 0: 
+                    self.rect.left = block.rect.right
+                else: 
+                    self.rect.right = block.rect.left
+            else: 
+                if dy > 0:  
+                    self.rect.top = block.rect.bottom
+                else:  
+                    self.rect.bottom = block.rect.top
+
     
     def avoid_overlap(self):
-        # Verificar colisões com outros inimigos
+    # Verificar colisões com outros inimigos
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            if enemy != self:  
-                if self.rect.right > enemy.rect.left and self.rect.left < enemy.rect.left:
-                    self.rect.right = enemy.rect.left
-                if self.rect.left < enemy.rect.right and self.rect.right > enemy.rect.right:
-                    self.rect.left = enemy.rect.right
-                if self.rect.bottom > enemy.rect.top and self.rect.top < enemy.rect.top:
-                    self.rect.bottom = enemy.rect.top
-                if self.rect.top < enemy.rect.bottom and self.rect.bottom > enemy.rect.bottom:
-                    self.rect.top = enemy.rect.bottom
+            if enemy != self:  # Garantir que não estamos comparando o inimigo com ele mesmo
+                # Calcular deslocamentos no eixo X e Y
+                dx = self.rect.centerx - enemy.rect.centerx
+                dy = self.rect.centery - enemy.rect.centery
+
+                # Determinar o lado predominante da sobreposição
+                if abs(dx) > abs(dy):  # Sobreposição no eixo X (horizontal)
+                    if dx > 0:  # Movendo da direita para a esquerda
+                        self.rect.left = enemy.rect.right
+                    else:  # Movendo da esquerda para a direita
+                        self.rect.right = enemy.rect.left
+                else:  # Sobreposição no eixo Y (vertical)
+                    if dy > 0:  # Movendo de baixo para cima
+                        self.rect.top = enemy.rect.bottom
+                    else:  # Movendo de cima para baixo
+                        self.rect.bottom = enemy.rect.top
+
 
 class Attack(pygame.sprite.Sprite):
     def __init__(self, game, x, y, direction_x, direction_y):

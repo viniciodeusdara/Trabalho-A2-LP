@@ -20,7 +20,7 @@ class Game:
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
         self.current_horde = 1
-        self.enemies_per_horde = 10
+        self.enemies_per_horde = 8
         self.horde_cleared = False
         self.horde_message_time = 0
 
@@ -51,7 +51,7 @@ class Game:
         if self.horde_cleared and current_time - self.horde_message_time > 2000:  # Exibe a mensagem por 2 segundos
             self.horde_cleared = False
             self.current_horde += 1
-            self.enemies_per_horde += 5  # Aumenta a dificuldade
+            self.enemies_per_horde += 1  # Aumenta a dificuldade
             self.create_map()
     
     def draw_horde_message(self):
