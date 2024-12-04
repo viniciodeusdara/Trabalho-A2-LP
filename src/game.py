@@ -6,6 +6,8 @@ from random import randint
 import time 
 
 def game_lobby():
+    # Carrega o som
+    click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")  # Substitua com o caminho do seu som
     pygame.init()
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
@@ -55,12 +57,21 @@ def game_lobby():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.collidepoint(event.pos):
                     difficulty = "Fácil"
+                    click_sound.play()
+                    time.sleep(4.5)
+                    click_sound.stop()
                     running = False
                 elif medium_button.collidepoint(event.pos):
                     difficulty = "Médio"
+                    click_sound.play()
+                    time.sleep(4.5)
+                    click_sound.stop()
                     running = False
                 elif hard_button.collidepoint(event.pos):
                     difficulty = "Difícil"
+                    click_sound.play()
+                    time.sleep(4.5)
+                    click_sound.stop()
                     running = False
 
         pygame.display.update()
@@ -69,6 +80,7 @@ def game_lobby():
     return difficulty
 
 class Game:
+    
     def __init__(self, difficulty):  # Recebe a dificuldade escolhida
         pygame.init()
         pygame.display.set_caption("COLOCAR NOME DO JOGO")
