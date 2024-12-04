@@ -274,39 +274,37 @@ class Attack(pygame.sprite.Sprite):
         # Direção e velocidade do ataque
         self.direction_x = direction_x
         self.direction_y = direction_y
-        self.speed = 8
+        self.speed = 10
 
-        self.animation_time = 50
-        self.last_update = pygame.time.get_ticks()
+        # Tempo para destruir o ataque
+        self.creation_time = pygame.time.get_ticks()
+        self.lifespan = 1000  # Duração em milissegundos (1 segundo)
 
     def load_frames(self):
+        """Carrega os quadros de animação do ataque a partir do spritesheet."""
         frames = []
-        for i in range(4):
+        for i in range(4):  # Supondo que existam 4 quadros de animação
             frame = self.spritesheet.get_sprite(i * TILESIZE, 0, TILESIZE, TILESIZE)
             frames.append(frame)
         return frames
 
-    def animate(self):
-        now = pygame.time.get_ticks()
-        if now - self.last_update > self.animation_time:
-            self.last_update = now
-            self.current_frame = (self.current_frame + 1) % len(self.frames)
-            self.image = self.frames[self.current_frame]
-
     def update(self):
-        self.animate()
-
-        # Movimento na direção do vetor
+        # Atualizar a posição do ataque
         self.rect.x += self.direction_x * self.speed
         self.rect.y += self.direction_y * self.speed
 
-        # Remover se sair da tela
-        if (self.rect.x < 0 or self.rect.x > WIN_WIDTH or
-                self.rect.y < 0 or self.rect.y > WIN_HEIGHT):
-            self.kill()
+        # Atualizar animação
+        self.current_frame += 1
+        if self.current_frame >= len(self.frames):
+            self.current_frame = 0
+        self.image = self.frames[self.current_frame]
 
-        # Colisão com inimigos
+        # Verificar se o ataque atingiu um inimigo
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            enemy.take_damage(10)
+            enemy.take_damage(20)  # Causa 20 de dano ao inimigo
+            self.kill()  # Remove o ataque após colidir
+
+        # Remover o ataque após o tempo de vida
+        if pygame.time.get_ticks() - self.creation_time > self.lifespan:
             self.kill()
