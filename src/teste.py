@@ -67,8 +67,8 @@ def draw_wrapped_text_with_numbers(text, font, color, surface, rect, line_height
     
     # Quebra o texto em linhas que cabem no retângulo
     for word in words:
-        # Verifica se o word é um número com ponto, como "1.", "2.", etc ou "Boa", que é o começo da frase final
-        if (word[0].isdigit() and word[1] == ".") or (word[0:3]=="Boa"):
+        # Verifica se o word tem pelo menos 2 caracteres e é um número com ponto (como "1."), ou começa com "Boa"
+        if len(word) > 1 and (word[0].isdigit() and word[1] == ".") or (word[0:3] == "Boa"):
             if current_line:  # Se já houver texto na linha, armazena e começa uma nova linha
                 lines.append(current_line)
             current_line = word  # Inicia uma nova linha com o número
@@ -80,6 +80,7 @@ def draw_wrapped_text_with_numbers(text, font, color, surface, rect, line_height
                 if current_line:
                     lines.append(current_line)
                 current_line = word  # Inicia uma nova linha com a palavra que não cabe
+
 
     if current_line:
         lines.append(current_line)
@@ -97,6 +98,14 @@ instructions_text = (
     "2. Pressione espaço para interagir com objetos. "
     "3. Complete os desafios para avançar de nível. "
     "Boa sorte e divirta-se!"
+)
+
+# Créditos do jogo
+texto_creditos = (
+    "1. Lucas Coelho "
+    "2. Lucas Dressler "
+    "3. Roger Vinícius "
+    "4. Vinicio Deusdará "
 )
 
 # Função para criar botões
@@ -129,6 +138,7 @@ def game_lobby():
     settings_open = False
     como_jogar = False
     dificuldade = False
+    creditos = False
 
     running = True
     while running:
@@ -174,7 +184,7 @@ def game_lobby():
                 dificuldade = True
 
             if draw_button(screen, 250, 370, 300, 50, "CRÉDITOS", BLACK, HOVER_GRAY):
-                print("Botão 'CRÉDITOS' clicado")
+                creditos = True
 
         if dificuldade:
             
@@ -214,7 +224,6 @@ def game_lobby():
                     dificuldade_escolhida = "Difícil"
                     dificuldade = False
 
-
         if como_jogar:
 
             settings_open = False
@@ -235,6 +244,27 @@ def game_lobby():
             # Detecta clique na área da seta
             if back_arrow_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
                 como_jogar = False
+        
+        if creditos:
+
+            settings_open = False
+            dificuldade = False
+
+            # Exibe o retângulo e o texto explicativo
+            pygame.draw.rect(screen, GRAY, (200, 150, 400, 300)) # Molde de onde os elementos ficam 
+            draw_text("Créditos", font, WHITE, screen, screen_width // 2, 160)
+
+            # Rect onde o texto será desenhado
+            text_rect = pygame.Rect(210, 200, 380, 200)
+            draw_wrapped_text_with_numbers(texto_creditos, font, WHITE, screen, text_rect, 30)
+
+            # Botão de "Voltar" com a imagem da seta
+            back_arrow_rect = pygame.Rect(210, 160, 40, 40)  # Posição da seta
+            screen.blit(back_arrow_img, back_arrow_rect)
+
+            # Detecta clique na área da seta
+            if back_arrow_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+                creditos = False
 
         # Análise dos eventos (cliques) ocorridos
         for event in pygame.event.get():
@@ -247,7 +277,7 @@ def game_lobby():
                     settings_open = True
                 elif instagram_button_rect.collidepoint(event.pos):
                     webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw")
-                else:
+                if settings_open == False and como_jogar == False and dificuldade == False and creditos == False:
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
