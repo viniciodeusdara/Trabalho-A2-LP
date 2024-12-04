@@ -95,7 +95,6 @@ class Player(pygame.sprite.Sprite):
             self.die()
 
     def die(self):
-        """Lógica para quando o jogador morrer."""
         print("O jogador morreu!")
 
     def collide_blocks(self, direction):
@@ -158,7 +157,7 @@ class Ground(pygame.sprite.Sprite):
         self.rect.y = self.y
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, current_horde):
         self.game = game
         self._layer = ENEMY_LAYER
         self.groups = self.game.all_sprites, self.game.enemies
@@ -172,6 +171,10 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = 2 
         self.health = 50
         self.damage = 10
+        self.current_horde = current_horde
+        if self.current_horde > 1:
+            self.health += 10 * self.current_horde
+            self.damage += 5 * self.current_horde
 
     def update(self):
         self.move_towards_player()
