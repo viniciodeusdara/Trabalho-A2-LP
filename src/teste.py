@@ -246,7 +246,11 @@ def game_lobby():
                     settings_open = True
                 elif instagram_button_rect.collidepoint(event.pos):
                     webbrowser.open("https://www.instagram.com/fgvjr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw")
-        
+                else:
+                    click_sound.play()
+                    time.sleep(4.5)
+                    click_sound.stop()
+
         # Atualiza a tela
         pygame.display.update()
 
