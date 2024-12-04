@@ -56,7 +56,8 @@ class Game:
                 self.playing = False
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # Barra de espaço para atacar
+                if event.key == pygame.K_SPACE:  # Barra de espaço para atacar]
+                    
                     self.player.attack()       
                 
     def update(self):

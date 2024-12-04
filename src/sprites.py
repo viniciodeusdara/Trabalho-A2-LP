@@ -14,8 +14,13 @@ class Spritesheet:
         return sprite
 
 class Player(pygame.sprite.Sprite):
+    import pygame
+from config import *
+import math
+
+class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
-        
+        # Código existente...
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites
@@ -29,15 +34,32 @@ class Player(pygame.sprite.Sprite):
         self.x_change = 0
         self.y_change = 0
 
-        self.facing = "down"
-
         self.image = self.game.character_spritesheet.get_sprite(0, 0, self.width, self.height)
-    
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
         self.health = 100
         self.last_damage_time = 0
+    
+    def attack(self):
+        """Cria um ataque direcionado ao mouse."""
+        x, y = self.rect.center
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        # Calcula a direção como um vetor normalizado
+        direction_x = mouse_x - x
+        direction_y = mouse_y - y
+        distance = math.sqrt(direction_x**2 + direction_y**2)
+
+        if distance != 0:
+            direction_x /= distance
+            direction_y /= distance
+
+        # Cria o ataque com a direção calculada
+        Attack(self.game, x, y, direction_x, direction_y)
+
+    # Resto da classe permanece o mesmo...
+
     
     def update(self):
         self.movement()
@@ -50,10 +72,6 @@ class Player(pygame.sprite.Sprite):
         self.x_change = 0
         self.y_change = 0
     
-    def attack(self):
-        """Cria um ataque na direção do jogador."""
-        x, y = self.rect.center
-        Attack(self.game, x, y, self.facing)
 
     def movement(self):
         keys = pygame.key.get_pressed()
@@ -226,35 +244,36 @@ class Enemy(pygame.sprite.Sprite):
                     self.rect.top = enemy.rect.bottom
 
 class Attack(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, direction):
+    def __init__(self, game, x, y, direction_x, direction_y):
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites, self.game.attacks
         pygame.sprite.Sprite.__init__(self, self.groups)
-        self.spritesheet = self.game.attack_spritesheet  # Spritesheet do ataque
+        self.spritesheet = self.game.attack_spritesheet
 
         # Carregando quadros da animação
         self.frames = self.load_frames()
         self.current_frame = 0
-        self.image = self.frames[self.current_frame]  # Quadro inicial
+        self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-        self.direction = direction
-        self.speed = 5  # Velocidade do ataque
-        self.animation_time = 50  # Tempo entre quadros (em ms)
-        self.last_update = pygame.time.get_ticks()  # Para controle de tempo
+        # Direção e velocidade do ataque
+        self.direction_x = direction_x
+        self.direction_y = direction_y
+        self.speed = 8
+
+        self.animation_time = 50
+        self.last_update = pygame.time.get_ticks()
 
     def load_frames(self):
-        """Carrega os quadros da animação do spritesheet."""
         frames = []
-        for i in range(4):  # Número de quadros no spritesheet
+        for i in range(4):
             frame = self.spritesheet.get_sprite(i * TILESIZE, 0, TILESIZE, TILESIZE)
             frames.append(frame)
         return frames
 
     def animate(self):
-        """Atualiza o quadro da animação."""
         now = pygame.time.get_ticks()
         if now - self.last_update > self.animation_time:
             self.last_update = now
@@ -264,23 +283,17 @@ class Attack(pygame.sprite.Sprite):
     def update(self):
         self.animate()
 
-        # Movimento do ataque na direção
-        if self.direction == "up":
-            self.rect.y -= self.speed
-        elif self.direction == "down":
-            self.rect.y += self.speed
-        elif self.direction == "left":
-            self.rect.x -= self.speed
-        elif self.direction == "right":
-            self.rect.x += self.speed
+        # Movimento na direção do vetor
+        self.rect.x += self.direction_x * self.speed
+        self.rect.y += self.direction_y * self.speed
 
-        # Remover o ataque se sair da tela
+        # Remover se sair da tela
         if (self.rect.x < 0 or self.rect.x > WIN_WIDTH or
                 self.rect.y < 0 or self.rect.y > WIN_HEIGHT):
             self.kill()
 
-        # Verificar colisão com inimigos
+        # Colisão com inimigos
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            enemy.take_damage(10)  # Causa 10 de dano ao inimigo
-            self.kill()  # Remove o ataque após o impacto
+            enemy.take_damage(10)
+            self.kill()
