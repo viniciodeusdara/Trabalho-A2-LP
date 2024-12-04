@@ -6,6 +6,7 @@ import time
 # Inicializa o Pygame
 pygame.init()
 
+
 # Dimensões da tela
 screen_width, screen_height = 800, 600
 screen = pygame.display.set_mode((screen_width, screen_height))

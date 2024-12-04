@@ -151,7 +151,7 @@ class Ground(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(0, 0, self.width, self.height)
+        self.image = self.game.terrain1_spritesheet.get_sprite(0, 0, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
