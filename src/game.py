@@ -8,13 +8,16 @@ import time
 def game_lobby():
     pygame.init()
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    pygame.display.set_caption("ESCAPE THE MATRIX")
+    pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
-    pygame.mixer.init()
 
     # Carrega a imagem de fundo
     background_image = pygame.image.load('public/images/fgv.png')
     background_image = pygame.transform.scale(background_image, (WIN_WIDTH, WIN_HEIGHT))  # Redimensiona para preencher a tela
+
+    # Carrega a imagem do título
+    title_image = pygame.image.load('public/images/gametitle.png')
+    title_image = pygame.transform.scale(title_image, (400, 150))  # Redimensiona o título, se necessário
 
     running = True
     difficulty = None
@@ -22,10 +25,11 @@ def game_lobby():
     while running:
         # Desenha a imagem de fundo
         screen.blit(background_image, (0, 0))
-        # Desenha o título
-        title_text = font.render("Escape the Matrix!", True, (0, 0, 0))
-        title_rect = title_text.get_rect(center=(WIN_WIDTH // 2, 100))
-        screen.blit(title_text, title_rect)
+
+        # Desenha a imagem do título na frente da tela
+        title_rect = title_image.get_rect(center=(WIN_WIDTH // 2, 100))  # Ajuste a posição do título conforme necessário
+        screen.blit(title_image, title_rect)
+
 
         # Botões de dificuldade
         easy_button = pygame.Rect(WIN_WIDTH // 2 - 150, 200, 300, 50)
