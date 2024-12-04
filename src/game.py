@@ -4,18 +4,22 @@ from config import *
 from sprites import *
 from random import randint
 
-# Função do lobby
 def game_lobby():
     pygame.init()
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
 
+    # Carrega a imagem de fundo
+    background_image = pygame.image.load('public/images/fgv.png')
+    background_image = pygame.transform.scale(background_image, (WIN_WIDTH, WIN_HEIGHT))  # Redimensiona para preencher a tela
+
     running = True
     difficulty = None
 
     while running:
-        screen.fill((255, 255, 255))
+        # Desenha a imagem de fundo
+        screen.blit(background_image, (0, 0))
 
         # Desenha o título
         title_text = font.render("Escolha a Dificuldade", True, (0, 0, 0))
