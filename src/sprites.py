@@ -310,3 +310,59 @@ class Attack(pygame.sprite.Sprite):
         for enemy in hits:
             enemy.take_damage(10)
             self.kill()
+
+class Boss(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        super().__init__()
+        self.game = game
+        self.image = pygame.image.load("public/images/boss_eigenvalue.png").convert_alpha()  # Carregar a imagem do boss
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        self.health = 200  # Mais saúde que um inimigo normal
+        self.speed = 2
+
+    def update(self):
+        # Adicione a lógica para movimentação ou ataques especiais do Boss aqui
+        pass
+
+    def take_damage(self, amount):
+        """Reduz a saúde do Boss quando ele é atingido."""
+        self.health -= amount
+        if self.health <= 0:
+            self.kill()  # Remove o Boss da tela quando sua saúde chega a 0
+
+
+class BossProjectile(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, direction_x, direction_y):
+        self.game = game
+        self._layer = PROJECTILE_LAYER
+        self.groups = self.game.all_sprites, self.game.projectiles
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.image = pygame.Surface((TILESIZE // 2, TILESIZE // 2))
+        self.image.fill((255, 0, 0))  # Projétil vermelho
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+        self.x = x
+        self.y = y
+        self.direction_x = direction_x
+        self.direction_y = direction_y
+        self.speed = 5
+
+    def update(self):
+        """Atualiza a posição do projétil."""
+        self.x += self.direction_x * self.speed
+        self.y += self.direction_y * self.speed
+        self.rect.center = (self.x, self.y)
+
+        # Remover projétil se sair da tela
+        if (self.x < 0 or self.x > self.game.width or
+                self.y < 0 or self.y > self.game.height):
+            self.kill()
+
+        # Colisão com o jogador
+        if pygame.sprite.collide_rect(self, self.game.player):
+            self.game.player.take_damage(10)  # Dano ao jogador
+            self.kill()

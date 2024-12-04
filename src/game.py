@@ -20,7 +20,7 @@ class Game:
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
         self.current_horde = 1
-        self.enemies_per_horde = 8
+        self.enemies_per_horde = 1
         self.horde_cleared = False
         self.horde_message_time = 0
 
@@ -30,16 +30,28 @@ class Game:
                 Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
-            # Não recrie o jogador se ele já existir
                 if column == "P" and not hasattr(self, 'player'):
                     self.player = Player(self, j, i)
 
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
 
-    # Spawnar inimigos da horda
-        for _ in range(self.enemies_per_horde):
+        # Spawnar inimigos da horda
+        for _ in range(self.enemies_per_horde - 1):  # Deixa um espaço para o Boss
             Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1))
+
+        # Adiciona o Boss somente na quinta horda e nas seguintes múltiplas de 5
+        if self.current_horde % 5 == 0:
+            boss_x = randint(1, map_width - 1)
+            boss_y = randint(1, map_height - 1)
+
+            # Certifique-se de que a posição do Boss seja válida (não em cima de um bloco)
+            while MAPA_1[boss_y][boss_x] == "B":
+                boss_x = randint(1, map_width - 1)
+                boss_y = randint(1, map_height - 1)
+
+            Boss(self, boss_x, boss_y)
+
     
     def check_horde_status(self):
         if not self.enemies and not self.horde_cleared:
