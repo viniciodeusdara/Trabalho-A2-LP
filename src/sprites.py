@@ -172,9 +172,7 @@ class Enemy(pygame.sprite.Sprite):
         self.health = 20
         self.damage = 20
         self.current_horde = current_horde
-        if self.current_horde > 1:
-            self.health += 10 * self.current_horde
-            self.damage += 20 * self.current_horde
+
 
     def update(self):
         self.move_towards_player()
@@ -305,7 +303,7 @@ class Attack(pygame.sprite.Sprite):
         # Verificar se o ataque atingiu um inimigo
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            enemy.take_damage(20)  # Causa 20 de dano ao inimigo
+            enemy.take_damage(40)  # Causa 20 de dano ao inimigo
             self.kill()  # Remove o ataque após colidir
 
         # Remover o ataque após o tempo de vida
