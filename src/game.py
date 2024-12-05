@@ -115,13 +115,13 @@ class Game:
 
         
         # Cria os inimigos somente após o tempo de espera de 5 segundos
-        if self.current_horde * self.enemies_per_horde <= 25:
+        if self.current_horde * self.enemies_per_horde <= 30:
             for _ in range(self.current_horde * self.enemies_per_horde):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
         else:
-            for _ in range(20):
+            for _ in range(35):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
-
+ 
     def check_horde_status(self):
         #Verifica se a horda foi eliminada
         if not self.enemies and not self.horde_cleared:
@@ -148,7 +148,7 @@ class Game:
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
     
-        self.boss = Boss(self, randint(1, map_width - 1), randint(1, map_height - 1))
+        self.boss = Boss(self, randint(2, map_width - 2), randint(2, map_height - 2))
         self.all_sprites.add(self.boss)
 
     def draw_horde_message(self):
@@ -191,9 +191,6 @@ class Game:
         self.check_player_health()
         self.check_horde_status()
         self.spawn_next_horde()
-
-        if hasattr(self, 'boss'):
-            self.boss.update()
 
     def check_player_health(self):
         #Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0
@@ -249,7 +246,7 @@ class Game:
             pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
 
     def draw(self):
-        #Função que desenha o jogo
+        #Função que desenha o jogo 
         self.screen.fill((255, 255, 255))
         self.all_sprites.draw(self.screen)
         self.draw_health_bar()

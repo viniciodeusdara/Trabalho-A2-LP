@@ -280,7 +280,7 @@ class Attack(pygame.sprite.Sprite):
 
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            enemy.take_damage(40)
+            enemy.take_damage(35)
             self.kill()
 
         if pygame.time.get_ticks() - self.creation_time > self.lifespan:
