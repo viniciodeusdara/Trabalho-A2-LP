@@ -5,16 +5,20 @@ import random
 
 class Spritesheet:
     def __init__(self, file):
+        #iniciliza a spritesheet
         self.sheet = pygame.image.load(file).convert()
 
     def get_sprite(self, x, y, width, height):
+        #Cria um sprite a partir da spritesheet
         sprite = pygame.Surface([width, height])
         sprite.blit(self.sheet, (0, 0), (x, y, width, height))
         sprite.set_colorkey(BLACK)
         return sprite
     
 class Player(pygame.sprite.Sprite):
+    #Classe do jogador
     def __init__(self, game, x, y):
+        #Inicializa o jogador
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites
@@ -51,6 +55,7 @@ class Player(pygame.sprite.Sprite):
         Attack(self.game, x, y, direction_x, direction_y)
 
     def update(self):
+        #Atualiza o jogador
         self.movement()
 
         self.rect.x += self.x_change
@@ -63,6 +68,7 @@ class Player(pygame.sprite.Sprite):
     
 
     def movement(self):
+        #Movimenta o jogador
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.x_change -= PLAYER_SPEED
@@ -78,15 +84,17 @@ class Player(pygame.sprite.Sprite):
             self.facing = "down"
 
     def take_damage(self, amount):
-        """Reduz a saúde do jogador."""
+        #Dinamica de dano do player
         self.health -= amount
         if self.health <= 0:
             self.die()
 
     def die(self):
+        #Morte do jogador
         print("O jogador morreu!")
 
     def collide_blocks(self, direction):
+        #Colisão com os blocos
         if direction == "x":
             hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
             if hits:
@@ -105,8 +113,9 @@ class Player(pygame.sprite.Sprite):
 
 
 class Block(pygame.sprite.Sprite):
+    #Classe dos blocos
     def __init__(self, game, x, y):
-        
+        #Inicializa o bloco
         self.game = game
         self._layer = BLOCK_LAYER
         self.groups = self.game.all_sprites, self.game.blocks
@@ -128,7 +137,9 @@ class Block(pygame.sprite.Sprite):
         self.rect.y = self.y
 
 class Ground(pygame.sprite.Sprite):
+    #Classe do chão
     def __init__(self, game, x, y):
+        #Inicializa o chão
         self.game = game
         self._layer = GROUND_LAYER
         self.groups = self.game.all_sprites
@@ -146,7 +157,9 @@ class Ground(pygame.sprite.Sprite):
         self.rect.y = self.y
 
 class Enemy(pygame.sprite.Sprite):
+    #Classe dos inimigos
     def __init__(self, game, x, y, current_horde):
+        #Inicializa o inimigo
         self.game = game
         self._layer = ENEMY_LAYER
         self.groups = self.game.all_sprites, self.game.enemies
@@ -164,23 +177,24 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def update(self):
+        #Atualiza o inimigo
         self.move_towards_player()
         self.handle_collisions()
         self.avoid_overlap()
         self.damage_player()
     
     def take_damage(self, amount):
-        """Reduz a saúde do inimigo."""
+        # O inimigo recebe dano
         self.health -= amount
         if self.health <= 0:
             self.die()
 
     def die(self):
-        """Remove o inimigo ao morrer."""
+        #Remove o inimigo ao morrer.
         self.kill()
 
     def damage_player(self):
-        """Causa dano ao jogador ao entrar em contato."""
+        #Causa dano ao jogador ao entrar em contato.
         if self.rect.colliderect(self.game.player.rect):
             current_time = pygame.time.get_ticks()
             if current_time - self.game.player.last_damage_time > 1000:
@@ -188,6 +202,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.game.player.last_damage_time = current_time
 
     def move_towards_player(self):
+        #Move o inimigo em direção ao jogador
         player_pos = self.game.player.rect.center
         enemy_pos = self.rect.center
 
@@ -203,6 +218,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y += direction_y * self.speed  
 
     def handle_collisions(self):
+        #Lida com as colisões
         hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
 
         for block in hits:
@@ -222,6 +238,7 @@ class Enemy(pygame.sprite.Sprite):
 
     
     def avoid_overlap(self):
+        #Evita a sobreposição
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
             if enemy != self:
@@ -241,7 +258,9 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Attack(pygame.sprite.Sprite):
+    # Classe do ataque
     def __init__(self, game, x, y, direction_x, direction_y):
+        #Inicializa o ataque
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites, self.game.attacks
@@ -262,7 +281,7 @@ class Attack(pygame.sprite.Sprite):
         self.lifespan = 1000
 
     def load_frames(self):
-        """Carrega os quadros de animação do ataque a partir do spritesheet."""
+        #Carrega os quadros de animação do ataque a partir do spritesheet.
         frames = []
         for i in range(4):
             frame = self.spritesheet.get_sprite(i * TILESIZE, 0, TILESIZE, TILESIZE)
@@ -270,6 +289,7 @@ class Attack(pygame.sprite.Sprite):
         return frames
 
     def update(self):
+        #Atualiza o ataque
         self.rect.x += self.direction_x * self.speed
         self.rect.y += self.direction_y * self.speed
 
@@ -287,7 +307,9 @@ class Attack(pygame.sprite.Sprite):
             self.kill()
 
 class Boss(Enemy):
+    #Classe do chefão
     def __init__(self, game, x, y):
+        #Inicializa o chefão
         super().__init__(game, x, y, current_horde=0)
         self.health = 800
         self.damage = 80
@@ -298,11 +320,12 @@ class Boss(Enemy):
         self.rect.y = y * TILESIZE
 
     def special_attack(self):
-        """O boss pode ter um ataque especial."""
+        """Será um ataque especial em futuras atualizações."""
         if random.random() < 0.01:
             print("O Boss realizou um ataque especial!")
 
     def update(self):
+        #Atualiza o chefão
         self.move_towards_player()
         self.handle_collisions()
         self.avoid_overlap()
