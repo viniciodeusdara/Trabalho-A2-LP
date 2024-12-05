@@ -151,6 +151,22 @@ class Game:
             for _ in range(25):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
 
+    def create_map_boss(self):
+        for i, row in enumerate(MAPA_2):
+            for j, column in enumerate(row):
+                Ground(self, j, i)
+                if column == "B":
+                    Block(self, j, i)
+            # Não recrie o jogador se ele já existir
+                if column == "P" and not hasattr(self, 'player'):
+                    self.player = Player(self, j, i)
+
+        map_width = len(MAPA_2[0])
+        map_height = len(MAPA_2) 
+
+        # Spawnar boss
+        Boss(self, randint(1, map_width - 1), randint(1, map_height - 1))
+
     def check_horde_status(self):
         if not self.enemies and not self.horde_cleared:
             self.horde_cleared = True
@@ -190,7 +206,10 @@ class Game:
         self.all_sprites.add(self.player)
 
         # Crie o mapa e os inimigos
-        self.create_map()
+        if self.current_horde == 1:
+            self.create_map()
+        elif self.current_horde == 6:
+            self.create_map_boss()
 
     def events(self):
         for event in pygame.event.get():
@@ -219,7 +238,9 @@ class Game:
     def draw_health_bar(self):
         """Desenha a barra de saúde do jogador na tela."""
         health = self.player.health
-        max_health = 100
+        max_health = 100 + self.current_horde * 20  # Aumenta a saúde máxima a cada horda
+        if health > max_health:
+            health = max_health
         bar_length = 200
         bar_height = 20
         fill = max(0, (health / max_health) * bar_length)  # Garante que não seja negativo
