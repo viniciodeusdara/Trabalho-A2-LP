@@ -207,10 +207,26 @@ class Game:
     def check_player_health(self):
         """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
         if self.player.health <= 0:
-            gameover_image = pygame.image.load('public/images/game_over_img.png')
-            gameover_image = pygame.transform.scale(gameover_image, (500, 300))
-            time.sleep(3)
-            self.playing = False
+            try:
+                # Tenta carregar e exibir a imagem de Game Over
+                gameover_image = pygame.image.load('public/images/game_over_img.png')
+                gameover_image = pygame.transform.scale(gameover_image, (500, 300))
+                gameover_rect = gameover_image.get_rect(center=(WIN_WIDTH // 2, 300))
+
+                # Desenha a imagem na tela
+                self.screen.blit(gameover_image, gameover_rect)
+
+                # Espera 3 segundos sem travar o jogo (usando um temporizador)
+                if not hasattr(self, 'gameover_time'):  # Inicia o temporizador
+                    self.gameover_time = pygame.time.get_ticks()
+
+                # Verifica se passaram 3 segundos
+                if pygame.time.get_ticks() - self.gameover_time >= 3000:
+                    self.playing = False  # Finaliza o jogo após 3 segundos
+                pygame.display.update()  # Atualiza a tela
+
+            except pygame.error as e:
+                print(f"Erro ao carregar a imagem: {e}")
 
     def draw_health_bar(self):
         """Desenha a barra de saúde do jogador na tela."""
