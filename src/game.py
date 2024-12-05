@@ -13,6 +13,10 @@ def game_lobby():
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
 
+    pygame.mixer.music.load('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
+    pygame.mixer.music.set_volume(0.5)  # Define o volume (0.0 a 1.0)
+    pygame.mixer.music.play(-1)  # Toca em loop infinito
+
     # Carrega a imagem de fundo
     background_image = pygame.image.load('public/images/fgv.png')
     background_image = pygame.transform.scale(background_image, (WIN_WIDTH, WIN_HEIGHT))  # Redimensiona para preencher a tela
