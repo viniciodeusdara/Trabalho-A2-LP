@@ -92,7 +92,7 @@ class Game:
         self.terrain1_spritesheet = Spritesheet("public/images/terrain.png")
         self.terrain2_spritesheet = Spritesheet("public/images/ground.png")
         self.enemy_spritesheet = Spritesheet("public/images/enemy.png")
-        self.boss_spritesheet = Spritesheet("public/images/enemy.png")
+        self.boss_spritesheet = Spritesheet("public/images/camacho.png")
         self.attack_spritesheet = Spritesheet("public/images/attack.png")
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.Group()
@@ -124,11 +124,11 @@ class Game:
         # Verifica se já passaram 5 segundos desde a criação do mapa
         if pygame.time.get_ticks() - self.time_to_show_enemies >= 5000:
             # Cria os inimigos somente após o tempo de espera de 5 segundos
-            if self.current_horde * self.enemies_per_horde <= 25:
+            if self.current_horde * self.enemies_per_horde <= 10:
                 for _ in range(self.current_horde * self.enemies_per_horde):
                     Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
             else:
-                for _ in range(25):
+                for _ in range(10):
                     Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
 
     def create_map_2(self):
@@ -152,22 +152,6 @@ class Game:
             for _ in range(25):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
 
-    def create_map_boss(self):
-        for i, row in enumerate(MAPA_2):
-            for j, column in enumerate(row):
-                Ground(self, j, i)
-                if column == "B":
-                    Block(self, j, i)
-            # Não recrie o jogador se ele já existir
-                if column == "P" and not hasattr(self, 'player'):
-                    self.player = Player(self, j, i)
-
-        map_width = len(MAPA_2[0])
-        map_height = len(MAPA_2) 
-
-        # Spawnar boss
-        Boss(self, randint(1, map_width - 1), randint(1, map_height - 1))
-
     def check_horde_status(self):
         if not self.enemies and not self.horde_cleared:
             self.horde_cleared = True
@@ -179,12 +163,23 @@ class Game:
             self.horde_cleared = False
             self.current_horde += 1
             self.enemies_per_horde += 1  # Aumenta a dificuldade
+            print(f"Próxima horda: {self.current_horde}")
+        
             if self.current_horde == 2:
                 self.create_map_2()
-            elif self.current_horde != 2:
+            elif self.current_horde == 5:  # Spawn do Boss na quinta horda
+                self.spawn_boss()
+            else:
                 self.create_map()
-            elif self.current_horde == 6:
-                self.create_map_boss()
+
+    def spawn_boss(self):
+        print("Boss está spawnando!")
+        map_width = len(MAPA_1[0])
+        map_height = len(MAPA_1)
+    
+        # Cria o boss no centro do mapa ou em posição aleatória
+        self.boss = Boss(self, randint(1, map_width - 1), randint(1, map_height - 1))
+        self.all_sprites.add(self.boss)
 
     def draw_horde_message(self):
         if self.horde_cleared:
@@ -209,10 +204,7 @@ class Game:
         self.all_sprites.add(self.player)
 
         # Crie o mapa e os inimigos
-        if self.current_horde == 1:
-            self.create_map()
-        elif self.current_horde == 6:
-            self.create_map_boss()
+        self.create_map()
 
     def events(self):
         for event in pygame.event.get():
