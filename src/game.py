@@ -62,6 +62,8 @@ def game_lobby():
                     running = False
 
         pygame.display.update()
+        # Controla o FPS (quadros por segundo)
+        pygame.time.Clock().tick(60)
 
     pygame.quit()
     return difficulty
@@ -271,6 +273,9 @@ class Game:
 
     def game_over(self):
         pass
+
+    # Controla o FPS (quadros por segundo)
+    pygame.time.Clock().tick(60)
 
 
 if __name__ == "__main__":
