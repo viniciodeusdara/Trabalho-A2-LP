@@ -20,7 +20,6 @@ import math
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
-        # Código existente...
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites
@@ -46,7 +45,6 @@ class Player(pygame.sprite.Sprite):
         x, y = self.rect.center
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        # Calcula a direção como um vetor normalizado
         direction_x = mouse_x - x
         direction_y = mouse_y - y
         distance = math.sqrt(direction_x**2 + direction_y**2)
@@ -55,12 +53,8 @@ class Player(pygame.sprite.Sprite):
             direction_x /= distance
             direction_y /= distance
 
-        # Cria o ataque com a direção calculada
         Attack(self.game, x, y, direction_x, direction_y)
 
-    # Resto da classe permanece o mesmo...
-
-    
     def update(self):
         self.movement()
 
@@ -169,7 +163,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
         self.speed = 2 
-        self.health = 50
+        self.health = 20
         self.damage = 20
         self.current_horde = current_horde
 
@@ -194,8 +188,7 @@ class Enemy(pygame.sprite.Sprite):
         """Causa dano ao jogador ao entrar em contato."""
         if self.rect.colliderect(self.game.player.rect):
             current_time = pygame.time.get_ticks()
-            # Controla para que o dano seja periódico (ex.: 1 segundo entre danos)
-            if current_time - self.game.player.last_damage_time > 1000:  # 1000 ms = 1 segundo
+            if current_time - self.game.player.last_damage_time > 1000:
                 self.game.player.take_damage(self.damage)
                 self.game.player.last_damage_time = current_time
 
@@ -203,22 +196,18 @@ class Enemy(pygame.sprite.Sprite):
         player_pos = self.game.player.rect.center
         enemy_pos = self.rect.center
 
-        # Calcular a direção do movimento
         direction_x = player_pos[0] - enemy_pos[0]
         direction_y = player_pos[1] - enemy_pos[1]
 
-        # Normalizar o vetor de direção
         distance = (direction_x**2 + direction_y**2) ** 0.5
         if distance != 0:
             direction_x /= distance
             direction_y /= distance
 
-        # Mover o inimigo em direção ao jogador
         self.rect.x += direction_x * self.speed
         self.rect.y += direction_y * self.speed  
 
     def handle_collisions(self):
-        # Verificar colisões com blocos
         hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
 
         for block in hits:
@@ -238,7 +227,6 @@ class Enemy(pygame.sprite.Sprite):
 
     
     def avoid_overlap(self):
-    # Verificar colisões com outros inimigos
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
             if enemy != self:
@@ -265,71 +253,63 @@ class Attack(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.spritesheet = self.game.attack_spritesheet
 
-        # Carregando quadros da animação
         self.frames = self.load_frames()
         self.current_frame = 0
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-        # Direção e velocidade do ataque
         self.direction_x = direction_x
         self.direction_y = direction_y
         self.speed = 10
 
-        # Tempo para destruir o ataque
         self.creation_time = pygame.time.get_ticks()
-        self.lifespan = 1000  # Duração em milissegundos (1 segundo)
+        self.lifespan = 1000
 
     def load_frames(self):
         """Carrega os quadros de animação do ataque a partir do spritesheet."""
         frames = []
-        for i in range(4):  # Supondo que existam 4 quadros de animação
+        for i in range(4):
             frame = self.spritesheet.get_sprite(i * TILESIZE, 0, TILESIZE, TILESIZE)
             frames.append(frame)
         return frames
 
     def update(self):
-        # Atualizar a posição do ataque
         self.rect.x += self.direction_x * self.speed
         self.rect.y += self.direction_y * self.speed
 
-        # Atualizar animação
         self.current_frame += 1
         if self.current_frame >= len(self.frames):
             self.current_frame = 0
         self.image = self.frames[self.current_frame]
 
-        # Verificar se o ataque atingiu um inimigo
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits:
-            enemy.take_damage(40)  # Causa 20 de dano ao inimigo
-            self.kill()  # Remove o ataque após colidir
+            enemy.take_damage(40)
+            self.kill()
 
-        # Remover o ataque após o tempo de vida
         if pygame.time.get_ticks() - self.creation_time > self.lifespan:
             self.kill()
 
 class Boss(Enemy):
     def __init__(self, game, x, y):
-        super().__init__(game, x, y, current_horde=0)  # No caso, não usamos horda para o Boss
-        self.health = 500  # Saúde do Boss
-        self.damage = 50   # Dano do Boss
-        self.speed = 1     # Velocidade reduzida, pois é um boss
-        self.image = self.game.boss_spritesheet.get_sprite(0, 0, TILESIZE * 2, TILESIZE * 2)  # Boss será maior
+        super().__init__(game, x, y, current_horde=0)
+        self.health = 500
+        self.damage = 50
+        self.speed = 1
+        self.image = self.game.boss_spritesheet.get_sprite(0, 0, TILESIZE * 2, TILESIZE * 2)
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
     def special_attack(self):
         """O boss pode ter um ataque especial."""
-        if random.random() < 0.01:  # Ataque especial com uma chance baixa
+        if random.random() < 0.01:
             print("O Boss realizou um ataque especial!")
-            # Aqui você pode criar um novo ataque, efeito visual ou outro comportamento.
 
     def update(self):
         self.move_towards_player()
         self.handle_collisions()
         self.avoid_overlap()
         self.damage_player()
-        self.special_attack()  # Chama o ataque especial do Boss
+        self.special_attack()

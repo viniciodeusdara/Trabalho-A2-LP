@@ -6,38 +6,32 @@ from random import randint
 import time 
 
 def game_lobby():
-    # Carrega o som
     pygame.init()
-    click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")  # Substitua com o caminho do seu som
+    click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
 
-    musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
-    musica_fundo.set_volume(0.5)  # Define o volume (0.0 a 1.0)
-    musica_fundo.play(-1)  # Toca em loop infinito
+    musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')
+    musica_fundo.set_volume(0.5)
+    musica_fundo.play(-1)
 
-    # Carrega a imagem de fundo
     background_image = pygame.image.load('public/images/fgv.png')
-    background_image = pygame.transform.scale(background_image, (WIN_WIDTH, WIN_HEIGHT))  # Redimensiona para preencher a tela
+    background_image = pygame.transform.scale(background_image, (WIN_WIDTH, WIN_HEIGHT))
 
-    # Carrega a imagem do título
     title_image = pygame.image.load('public/images/gametitle.png')
-    title_image = pygame.transform.scale(title_image, (400, 150))  # Redimensiona o título, se necessário
+    title_image = pygame.transform.scale(title_image, (400, 150))
 
     running = True
     difficulty = None
 
     while running:
-        # Desenha a imagem de fundo
         screen.blit(background_image, (0, 0))
 
-        # Desenha a imagem do título na frente da tela
-        title_rect = title_image.get_rect(center=(WIN_WIDTH // 2, 100))  # Ajuste a posição do título conforme necessário
+        title_rect = title_image.get_rect(center=(WIN_WIDTH // 2, 100)) 
         screen.blit(title_image, title_rect)
 
 
-        # Botões de dificuldade
         easy_button = pygame.Rect(WIN_WIDTH // 2 - 150, 200, 300, 50)
         medium_button = pygame.Rect(WIN_WIDTH // 2 - 150, 280, 300, 50)
         hard_button = pygame.Rect(WIN_WIDTH // 2 - 150, 360, 300, 50)
@@ -54,7 +48,6 @@ def game_lobby():
         screen.blit(medium_text, (medium_button.centerx - medium_text.get_width() // 2, medium_button.centery - medium_text.get_height() // 2))
         screen.blit(hard_text, (hard_button.centerx - hard_text.get_width() // 2, hard_button.centery - hard_text.get_height() // 2))
 
-        # Verifica os eventos de clique
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -91,16 +84,16 @@ def game_lobby():
 
 class Game:
     
-    def __init__(self, difficulty):  # Recebe a dificuldade escolhida
+    def __init__(self, difficulty):
         pygame.init()
-        musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
-        musica_fundo.set_volume(0.5)  # Define o volume (0.0 a 1.0)
-        musica_fundo.play(-1)  # Toca em loop infinito
-        pygame.display.set_caption("COLOCAR NOME DO JOGO")
+        pygame.display.set_caption("Escape the Matrix")
+        musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')
+        musica_fundo.set_volume(0.5)
+        musica_fundo.play(-1)
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
-        self.difficulty = difficulty  # Armazena a dificuldade
+        self.difficulty = difficulty
         self.character_spritesheet = Spritesheet("public/images/coelho.png")
         self.terrain1_spritesheet = Spritesheet("public/images/terrain.png")
         self.terrain2_spritesheet = Spritesheet("public/images/ground.png")
@@ -115,7 +108,6 @@ class Game:
         self.horde_cleared = False
         self.horde_message_time = 0
         
-        # Armazena o tempo para aguardar antes de mostrar os inimigos
         self.time_to_show_enemies = None
 
     def create_map(self):
@@ -128,7 +120,7 @@ class Game:
                 if column == "P" and not hasattr(self, 'player'):
                     self.player = Player(self, j, i)
 
-        # Define a hora de início do jogo (quando o mapa for criado)
+        
         if self.time_to_show_enemies is None:
             self.time_to_show_enemies = pygame.time.get_ticks()
         
@@ -151,10 +143,10 @@ class Game:
 
     def spawn_next_horde(self):
         current_time = pygame.time.get_ticks()
-        if self.horde_cleared and current_time - self.horde_message_time > 2000:  # Exibe a mensagem por 2 segundos
+        if self.horde_cleared and current_time - self.horde_message_time > 2000:
             self.horde_cleared = False
             self.current_horde += 1
-            self.enemies_per_horde += 1  # Aumenta a dificuldade
+            self.enemies_per_horde += 1
             print(f"Próxima horda: {self.current_horde}")
         
             if self.current_horde == 5:  # Spawn do Boss na quinta horda
@@ -167,7 +159,6 @@ class Game:
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
     
-        # Cria o boss no centro do mapa ou em posição aleatória
         self.boss = Boss(self, randint(1, map_width - 1), randint(1, map_height - 1))
         self.all_sprites.add(self.boss)
 
@@ -184,16 +175,13 @@ class Game:
     def new(self):
         self.playing = True
 
-        # Reinitialize apenas os grupos necessários
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
 
-        # Adicione o jogador ao grupo de sprites
         self.all_sprites.add(self.player)
 
-        # Crie o mapa e os inimigos
         self.create_map()
 
     def events(self):
@@ -202,7 +190,7 @@ class Game:
                 self.playing = False
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # Barra de espaço para atacar
+                if event.key == pygame.K_SPACE:
                     self.player.attack()
 
     def update(self):
@@ -211,13 +199,15 @@ class Game:
         self.check_horde_status()
         self.spawn_next_horde()
 
-    # Se houver um boss, atualizar ele também
         if hasattr(self, 'boss'):
             self.boss.update()
 
     def check_player_health(self):
         """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
         if self.player.health <= 0:
+            gameover_image = pygame.image.load('public/images/game_over_img.png')
+            gameover_image = pygame.transform.scale(gameover_image, (500, 300))
+            time.sleep(3)
             self.playing = False
 
     def draw_health_bar(self):
@@ -228,13 +218,11 @@ class Game:
             health = max_health
         bar_length = 200
         bar_height = 20
-        fill = max(0, (health / max_health) * bar_length)  # Garante que não seja negativo
+        fill = max(0, (health / max_health) * bar_length)
         outline_rect = pygame.Rect(20, 20, bar_length, bar_height)
         fill_rect = pygame.Rect(20, 20, fill, bar_height)
 
-        # Desenha a barra preenchida (vermelho)
         pygame.draw.rect(self.screen, (255, 0, 0), fill_rect)
-        # Desenha o contorno da barra (branco)
         pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
     
     def draw_boss_health(self):
@@ -243,13 +231,11 @@ class Game:
             max_health = 500
             bar_length = 400
             bar_height = 20
-            fill = max(0, (health / max_health) * bar_length)  # Garante que não seja negativo
+            fill = max(0, (health / max_health) * bar_length)
             outline_rect = pygame.Rect(WIN_WIDTH // 2 - bar_length // 2, 20, bar_length, bar_height)
             fill_rect = pygame.Rect(WIN_WIDTH // 2 - bar_length // 2, 20, fill, bar_height)
 
-            # Desenha a barra preenchida (vermelho)
             pygame.draw.rect(self.screen, (255, 0, 0), fill_rect)
-            # Desenha o contorno da barra (branco)
             pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
 
     def draw(self):
@@ -257,7 +243,7 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.draw_health_bar()
         self.draw_horde_message()
-        self.draw_boss_health()  # Desenha a barra de saúde do Boss, se existir
+        self.draw_boss_health()
         self.clock.tick(60)
         pygame.display.update()
 
@@ -271,14 +257,14 @@ class Game:
     def game_over(self):
         pass
 
-# Função principal
+
 if __name__ == "__main__":
-    difficulty = game_lobby()  # Chama o lobby
-    g = Game(difficulty)  # Passa a dificuldade para o jogo
-    g.new()
-    while g.running:
-        g.main()
-        g.game_over()
+    difficulty = game_lobby()
+    game = Game(difficulty)
+    game.new()
+    while game.running:
+        game.main()
+        game.game_over()
 
 pygame.quit()
 sys.exit()
