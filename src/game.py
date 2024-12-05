@@ -13,9 +13,9 @@ def game_lobby():
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
 
-    pygame.mixer.music.load('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
-    pygame.mixer.music.set_volume(0.5)  # Define o volume (0.0 a 1.0)
-    pygame.mixer.music.play(-1)  # Toca em loop infinito
+    musica_fundo = pygame.mixer.music.Sound('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
+    musica_fundo.set_volume(0.5)  # Define o volume (0.0 a 1.0)
+    musica_fundo.play(-1)  # Toca em loop infinito
 
     # Carrega a imagem de fundo
     background_image = pygame.image.load('public/images/fgv.png')
@@ -61,21 +61,30 @@ def game_lobby():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.collidepoint(event.pos):
                     difficulty = "Fácil"
+                    musica_fundo.stop()
+                    time.sleep(1)
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
+                    musica_fundo.play(-1)
                     running = False
                 elif medium_button.collidepoint(event.pos):
                     difficulty = "Médio"
+                    musica_fundo.stop()
+                    time.sleep(1)
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
+                    musica_fundo.play(-1)
                     running = False
                 elif hard_button.collidepoint(event.pos):
                     difficulty = "Difícil"
+                    musica_fundo.stop()
+                    time.sleep(1)
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
+                    musica_fundo.play(-1)
                     running = False
 
         pygame.display.update()
