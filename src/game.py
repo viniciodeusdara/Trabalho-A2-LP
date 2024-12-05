@@ -129,7 +129,7 @@ class Game:
 
         
             # Cria os inimigos somente após o tempo de espera de 5 segundos
-        if self.current_horde * self.enemies_per_horde <= 10:
+        if self.current_horde * self.enemies_per_horde <= 25:
             for _ in range(self.current_horde * self.enemies_per_horde):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
         else:
@@ -149,7 +149,7 @@ class Game:
             self.enemies_per_horde += 1
             print(f"Próxima horda: {self.current_horde}")
         
-            if self.current_horde == 5:  # Spawn do Boss na quinta horda
+            if self.current_horde % 5:  # Spawn do Boss na quinta horda
                 self.spawn_boss()
             else:
                 self.create_map()
