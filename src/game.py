@@ -7,8 +7,8 @@ import time
 
 def game_lobby():
     # Carrega o som
-    click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")  # Substitua com o caminho do seu som
     pygame.init()
+    click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")  # Substitua com o caminho do seu som
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
@@ -92,6 +92,7 @@ class Game:
         self.terrain1_spritesheet = Spritesheet("public/images/terrain.png")
         self.terrain2_spritesheet = Spritesheet("public/images/ground.png")
         self.enemy_spritesheet = Spritesheet("public/images/enemy.png")
+        self.boss_spritesheet = Spritesheet("public/images/enemy.png")
         self.attack_spritesheet = Spritesheet("public/images/attack.png")
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.Group()
@@ -182,6 +183,8 @@ class Game:
                 self.create_map_2()
             elif self.current_horde != 2:
                 self.create_map()
+            elif self.current_horde == 6:
+                self.create_map_boss()
 
     def draw_horde_message(self):
         if self.horde_cleared:
@@ -238,6 +241,7 @@ class Game:
     def draw_health_bar(self):
         """Desenha a barra de saúde do jogador na tela."""
         health = self.player.health
+        self.player.health = self.player.health + self.current_horde * 20
         max_health = 100 + self.current_horde * 20  # Aumenta a saúde máxima a cada horda
         if health > max_health:
             health = max_health

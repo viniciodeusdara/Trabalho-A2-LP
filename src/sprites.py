@@ -170,11 +170,11 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = y * TILESIZE
         self.speed = 2 
         self.health = 50
-        self.damage = 10
+        self.damage = 20
         self.current_horde = current_horde
         if self.current_horde > 1:
             self.health += 10 * self.current_horde
-            self.damage += 5 * self.current_horde
+            self.damage += 20 * self.current_horde
 
     def update(self):
         self.move_towards_player()
@@ -318,7 +318,7 @@ class Boss(Enemy):
         self.health = 500  # Saúde do Boss
         self.damage = 50   # Dano do Boss
         self.speed = 1     # Velocidade reduzida, pois é um boss
-        self.image = self.game.enemy_spritesheet.get_sprite(0, 0, TILESIZE * 2, TILESIZE * 2)  # Boss será maior
+        self.image = self.game.boss_spritesheet.get_sprite(0, 0, TILESIZE * 2, TILESIZE * 2)  # Boss será maior
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
