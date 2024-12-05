@@ -8,6 +8,7 @@ from random import randint
 import time 
 
 def game_lobby():
+    #Função que cria a tela inicial
     pygame.init()
     click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -28,6 +29,7 @@ def game_lobby():
     difficulty = None
 
     while running:
+        #Loop que mantém a tela inicial aberta
         screen.blit(background_image, (0, 0))
 
         title_rect = title_image.get_rect(center=(WIN_WIDTH // 2, 100)) 
@@ -64,6 +66,7 @@ class Game:
     
     def __init__(self, difficulty):
         pygame.init()
+        #Inicializando o jogo
         pygame.display.set_caption("Escape the Matrix")
         musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')
         musica_fundo.set_volume(0.5)
@@ -72,6 +75,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
         self.difficulty = difficulty
+
+        #Os sprites
         self.character_spritesheet = Spritesheet("public/images/coelho.png")
         self.terrain1_spritesheet = Spritesheet("public/images/terrain.png")
         self.terrain2_spritesheet = Spritesheet("public/images/ground.png")
@@ -79,6 +84,8 @@ class Game:
         self.boss_spritesheet = Spritesheet("public/images/camacho.png")
         self.attack_spritesheet = Spritesheet("public/images/attack.png")
         self.all_sprites = pygame.sprite.LayeredUpdates()
+
+        #Os grupos de sprites
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
         self.current_horde = 1
@@ -89,6 +96,7 @@ class Game:
         self.time_to_show_enemies = None
 
     def create_map(self):
+        #Função que cria o mapa
         print("Criando mapa...")
         for i, row in enumerate(MAPA_1):
             for j, column in enumerate(row):
@@ -106,7 +114,7 @@ class Game:
         map_height = len(MAPA_1)
 
         
-            # Cria os inimigos somente após o tempo de espera de 5 segundos
+        # Cria os inimigos somente após o tempo de espera de 5 segundos
         if self.current_horde * self.enemies_per_horde <= 25:
             for _ in range(self.current_horde * self.enemies_per_horde):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
@@ -115,11 +123,13 @@ class Game:
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
 
     def check_horde_status(self):
+        #Verifica se a horda foi eliminada
         if not self.enemies and not self.horde_cleared:
             self.horde_cleared = True
             self.horde_message_time = pygame.time.get_ticks()
 
     def spawn_next_horde(self):
+        #Função que cria a próxima horda
         current_time = pygame.time.get_ticks()
         if self.horde_cleared and current_time - self.horde_message_time > 2000:
             self.horde_cleared = False
@@ -133,6 +143,7 @@ class Game:
                 self.create_map()
 
     def spawn_boss(self):
+        #Função que spawna o boss
         print("Boss está spawnando!")
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
@@ -141,6 +152,7 @@ class Game:
         self.all_sprites.add(self.boss)
 
     def draw_horde_message(self):
+        #Função que desenha a mensagem de horda
         if self.horde_cleared:
             font = pygame.font.Font(None, 50)
             if self.current_horde == 1:
@@ -151,6 +163,7 @@ class Game:
             self.screen.blit(text, text_rect)
 
     def new(self):
+        #Função que inicia um novo jogo
         self.playing = True
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
@@ -163,6 +176,7 @@ class Game:
         self.create_map()
 
     def events(self):
+        #Função que trata os eventos do jogo
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
@@ -172,6 +186,7 @@ class Game:
                     self.player.attack()
 
     def update(self):
+        #Função que atualiza o jogo
         self.all_sprites.update()
         self.check_player_health()
         self.check_horde_status()
@@ -181,10 +196,10 @@ class Game:
             self.boss.update()
 
     def check_player_health(self):
-        """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
+        #Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0
         if self.player.health <= 0:
             try:
-                # Tenta carregar e exibir a imagem de Game Over
+                # Carrega a imagem de game over
                 gameover_image = pygame.image.load('public/images/game_over_img.png')
                 gameover_image = pygame.transform.scale(gameover_image, (500, 300))
                 gameover_rect = gameover_image.get_rect(center=(WIN_WIDTH // 2, 300))
@@ -205,9 +220,9 @@ class Game:
                 print(f"Erro ao carregar a imagem: {e}")
 
     def draw_health_bar(self):
-        """Desenha a barra de saúde do jogador na tela."""
+        #Desenha a barra de saúde do jogador
         health = self.player.health
-        max_health = 200  # Aumenta a saúde máxima a cada horda
+        max_health = 200 
         if health > max_health:
             health = max_health
         bar_length = 100
@@ -220,6 +235,7 @@ class Game:
         pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
     
     def draw_boss_health(self):
+        #Desenha a barra de saúde do boss
         if hasattr(self, 'boss'):
             health = self.boss.health
             max_health = 800
@@ -233,6 +249,7 @@ class Game:
             pygame.draw.rect(self.screen, (255, 255, 255), outline_rect, 2)
 
     def draw(self):
+        #Função que desenha o jogo
         self.screen.fill((255, 255, 255))
         self.all_sprites.draw(self.screen)
         self.draw_health_bar()

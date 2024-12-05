@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
         self.last_damage_time = 0
     
     def attack(self):
-        """Cria um ataque direcionado ao mouse."""
+        #Cria o ataque do player
         x, y = self.rect.center
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
