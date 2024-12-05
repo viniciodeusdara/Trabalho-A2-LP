@@ -106,13 +106,14 @@ class Game:
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
         self.current_horde = 1
-        self.enemies_per_horde = 8
+        self.enemies_per_horde = 5
         self.horde_cleared = False
         self.horde_message_time = 0
         
         self.time_to_show_enemies = None
 
     def create_map(self):
+        print("Criando mapa...")
         for i, row in enumerate(MAPA_1):
             for j, column in enumerate(row):
                 Ground(self, j, i)
@@ -128,31 +129,13 @@ class Game:
         map_width = len(MAPA_1[0])
         map_height = len(MAPA_1)
 
-        if pygame.time.get_ticks() - self.time_to_show_enemies >= 5000:
-            if self.current_horde * self.enemies_per_horde <= 10:
-                for _ in range(self.current_horde * self.enemies_per_horde):
-                    Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
-            else:
-                for _ in range(10):
-                    Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
-
-    def create_map_2(self):
-        for i, row in enumerate(MAPA_2):
-            for j, column in enumerate(row):
-                Ground(self, j, i)
-                if column == "B":
-                    Block(self, j, i)
-                if column == "P" and not hasattr(self, 'player'):
-                    self.player = Player(self, j, i)
-
-        map_width = len(MAPA_2[0])
-        map_height = len(MAPA_2) 
-
+        
+            # Cria os inimigos somente após o tempo de espera de 5 segundos
         if self.current_horde * self.enemies_per_horde <= 25:
             for _ in range(self.current_horde * self.enemies_per_horde):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
         else:
-            for _ in range(25):
+            for _ in range(10):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
 
     def check_horde_status(self):
@@ -168,9 +151,7 @@ class Game:
             self.enemies_per_horde += 1
             print(f"Próxima horda: {self.current_horde}")
         
-            if self.current_horde == 2:
-                self.create_map_2()
-            elif self.current_horde == 5:
+            if self.current_horde % 5:  # Spawn do Boss na quinta horda
                 self.spawn_boss()
             else:
                 self.create_map()
@@ -234,8 +215,7 @@ class Game:
     def draw_health_bar(self):
         """Desenha a barra de saúde do jogador na tela."""
         health = self.player.health
-        self.player.health = self.player.health + self.current_horde * 20
-        max_health = 100 + self.current_horde * 20
+        max_health = 100 + self.current_horde * 20  # Aumenta a saúde máxima a cada horda
         if health > max_health:
             health = max_health
         bar_length = 200
