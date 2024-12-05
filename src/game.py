@@ -34,44 +34,20 @@ def game_lobby():
         screen.blit(title_image, title_rect)
 
 
-        easy_button = pygame.Rect(WIN_WIDTH // 2 - 150, 200, 300, 50)
-        medium_button = pygame.Rect(WIN_WIDTH // 2 - 150, 280, 300, 50)
-        hard_button = pygame.Rect(WIN_WIDTH // 2 - 150, 360, 300, 50)
+        play_button = pygame.Rect(WIN_WIDTH // 2 - 150, 200, 300, 50)
 
-        pygame.draw.rect(screen, (0, 0, 255), easy_button)
-        pygame.draw.rect(screen, (0, 0, 255), medium_button)
-        pygame.draw.rect(screen, (0, 0, 255), hard_button)
+        pygame.draw.rect(screen, (0, 0, 255), play_button)
 
-        easy_text = font.render("Fácil", True, (255, 255, 255))
-        medium_text = font.render("Médio", True, (255, 255, 255))
-        hard_text = font.render("Difícil", True, (255, 255, 255))
-
-        screen.blit(easy_text, (easy_button.centerx - easy_text.get_width() // 2, easy_button.centery - easy_text.get_height() // 2))
-        screen.blit(medium_text, (medium_button.centerx - medium_text.get_width() // 2, medium_button.centery - medium_text.get_height() // 2))
-        screen.blit(hard_text, (hard_button.centerx - hard_text.get_width() // 2, hard_button.centery - hard_text.get_height() // 2))
-
+        play_text = font.render("Jogar", True, (255, 255, 255))
+       
+        screen.blit(play_text, (play_button.centerx - play_text.get_width() // 2, play_button.centery - play_text.get_height() // 2))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if easy_button.collidepoint(event.pos):
+                if play_button.collidepoint(event.pos):
                     difficulty = "Fácil"
-                    musica_fundo.stop()
-                    time.sleep(0.5)
-                    click_sound.play()
-                    time.sleep(4.5)
-                    click_sound.stop()
-                    running = False
-                elif medium_button.collidepoint(event.pos):
-                    difficulty = "Médio"
-                    musica_fundo.stop()
-                    time.sleep(0.5)
-                    click_sound.play()
-                    time.sleep(4.5)
-                    click_sound.stop()
-                    running = False
-                elif hard_button.collidepoint(event.pos):
-                    difficulty = "Difícil"
                     musica_fundo.stop()
                     time.sleep(0.5)
                     click_sound.play()
