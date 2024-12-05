@@ -68,7 +68,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        self.health = 100
+        self.health = 200
         self.last_damage_time = 0
     
     def attack(self):

@@ -106,7 +106,7 @@ class Game:
         self.enemies = pygame.sprite.Group()
         self.player = Player(self, 5, 5)
         self.current_horde = 1
-        self.enemies_per_horde = 5
+        self.enemies_per_horde = 7
         self.horde_cleared = False
         self.horde_message_time = 0
         
@@ -151,7 +151,7 @@ class Game:
             self.enemies_per_horde += 1
             print(f"Próxima horda: {self.current_horde}")
         
-            if self.current_horde % 5:  # Spawn do Boss na quinta horda
+            if self.current_horde % 5 == 0:  # Spawn do Boss na quinta horda
                 self.spawn_boss()
             else:
                 self.create_map()
@@ -215,10 +215,10 @@ class Game:
     def draw_health_bar(self):
         """Desenha a barra de saúde do jogador na tela."""
         health = self.player.health
-        max_health = 100 + self.current_horde * 20  # Aumenta a saúde máxima a cada horda
+        max_health = 200  # Aumenta a saúde máxima a cada horda
         if health > max_health:
             health = max_health
-        bar_length = 200
+        bar_length = 100
         bar_height = 20
         fill = max(0, (health / max_health) * bar_length)
         outline_rect = pygame.Rect(20, 20, bar_length, bar_height)
@@ -230,7 +230,7 @@ class Game:
     def draw_boss_health(self):
         if hasattr(self, 'boss'):
             health = self.boss.health
-            max_health = 500
+            max_health = 800
             bar_length = 400
             bar_height = 20
             fill = max(0, (health / max_health) * bar_length)
