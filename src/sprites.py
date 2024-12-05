@@ -169,7 +169,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
         self.speed = 2 
-        self.health = 50
+        self.health = 20
         self.damage = 20
         self.current_horde = current_horde
         if self.current_horde > 1:
