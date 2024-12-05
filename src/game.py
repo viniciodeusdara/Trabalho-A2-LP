@@ -241,6 +241,10 @@ class Game:
     def check_player_health(self):
         """Verifica a saúde do jogador e finaliza o jogo se ela chegar a 0."""
         if self.player.health <= 0:
+            # Carrega a imagem do título
+            gameover_image = pygame.image.load('public/images/game_over_img.png')
+            gameover_image = pygame.transform.scale(gameover_image, (500, 300))  # Redimensiona o título, se necessário
+            time.sleep(3)
             self.playing = False
 
     def draw_health_bar(self):
