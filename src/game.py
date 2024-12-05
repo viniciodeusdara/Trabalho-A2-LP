@@ -13,7 +13,7 @@ def game_lobby():
     pygame.display.set_caption("Tela de Seleção de Dificuldade")
     font = pygame.font.Font(None, 50)
 
-    musica_fundo = pygame.mixer.music.Sound('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
+    musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
     musica_fundo.set_volume(0.5)  # Define o volume (0.0 a 1.0)
     musica_fundo.play(-1)  # Toca em loop infinito
 
@@ -62,29 +62,26 @@ def game_lobby():
                 if easy_button.collidepoint(event.pos):
                     difficulty = "Fácil"
                     musica_fundo.stop()
-                    time.sleep(1)
+                    time.sleep(0.5)
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
-                    musica_fundo.play(-1)
                     running = False
                 elif medium_button.collidepoint(event.pos):
                     difficulty = "Médio"
                     musica_fundo.stop()
-                    time.sleep(1)
+                    time.sleep(0.5)
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
-                    musica_fundo.play(-1)
                     running = False
                 elif hard_button.collidepoint(event.pos):
                     difficulty = "Difícil"
                     musica_fundo.stop()
-                    time.sleep(1)
+                    time.sleep(0.5)
                     click_sound.play()
                     time.sleep(4.5)
                     click_sound.stop()
-                    musica_fundo.play(-1)
                     running = False
 
         pygame.display.update()
@@ -96,6 +93,9 @@ class Game:
     
     def __init__(self, difficulty):  # Recebe a dificuldade escolhida
         pygame.init()
+        musica_fundo = pygame.mixer.Sound('public/sounds/main_audio.mp3')  # Use um arquivo de áudio suportado (MP3, OGG, etc.)
+        musica_fundo.set_volume(0.5)  # Define o volume (0.0 a 1.0)
+        musica_fundo.play(-1)  # Toca em loop infinito
         pygame.display.set_caption("COLOCAR NOME DO JOGO")
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
