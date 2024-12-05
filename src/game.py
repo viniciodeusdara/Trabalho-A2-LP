@@ -8,7 +8,6 @@ from random import randint
 import time 
 
 def game_lobby():
-    #Função que cria a tela inicial
     pygame.init()
     click_sound = pygame.mixer.Sound("public/sounds/aperta-ao-play-neymar.mp3")
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -23,25 +22,30 @@ def game_lobby():
     background_image = pygame.transform.scale(background_image, (WIN_WIDTH, WIN_HEIGHT))
 
     title_image = pygame.image.load('public/images/gametitle.png')
-    title_image = pygame.transform.scale(title_image, (400, 150))
+    title_image = pygame.transform.scale(title_image, (600, 300))
 
     running = True
     difficulty = None
 
     while running:
-        #Loop que mantém a tela inicial aberta
         screen.blit(background_image, (0, 0))
 
-        title_rect = title_image.get_rect(center=(WIN_WIDTH // 2, 100)) 
+        # Centraliza o título na tela
+        title_rect = title_image.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 4))  # Coloca o título mais acima
         screen.blit(title_image, title_rect)
 
+        # Criação do retângulo do botão 'Jogar' centralizado
+        play_button_width = 400
+        play_button_height = 50
+        play_button = pygame.Rect(WIN_WIDTH // 2 - play_button_width // 2, WIN_HEIGHT // 2 + 50, play_button_width, play_button_height)  # Ajustei a posição Y
 
-        play_button = pygame.Rect(WIN_WIDTH // 2 - 150, 200, 300, 50)
-
+        # Desenha o botão
         pygame.draw.rect(screen, (0, 0, 255), play_button)
 
+        # Criação do texto no botão
         play_text = font.render("Jogar", True, (255, 255, 255))
-       
+
+        # Centraliza o texto no botão
         screen.blit(play_text, (play_button.centerx - play_text.get_width() // 2, play_button.centery - play_text.get_height() // 2))
         
         for event in pygame.event.get():
@@ -58,6 +62,8 @@ def game_lobby():
                     running = False
 
         pygame.display.update()
+        # Controla o FPS (quadros por segundo)
+        pygame.time.Clock().tick(60)
 
     pygame.quit()
     return difficulty
@@ -264,6 +270,9 @@ class Game:
 
     def game_over(self):
         pass
+
+    # Controla o FPS (quadros por segundo)
+    pygame.time.Clock().tick(60)
 
 
 if __name__ == "__main__":
