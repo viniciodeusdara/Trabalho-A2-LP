@@ -135,7 +135,7 @@ class Game:
             for _ in range(self.current_horde * self.enemies_per_horde):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
         else:
-            for _ in range(10):
+            for _ in range(20):
                 Enemy(self, randint(1, map_width - 1), randint(1, map_height - 1), self.current_horde)
 
     def check_horde_status(self):

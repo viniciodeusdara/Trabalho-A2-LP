@@ -101,9 +101,9 @@ class Enemy(pygame.sprite.Sprite):
 class Boss(Enemy):
     def __init__(self, game, x, y):
         super().__init__(game, x, y, current_horde=0)
-        self.health = 500
-        self.damage = 50
-        self.speed = 1
+        self.health = 800
+        self.damage = 80
+        self.speed = 2
         self.image = self.game.boss_spritesheet.get_sprite(0, 0, TILESIZE * 2, TILESIZE * 2)
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
