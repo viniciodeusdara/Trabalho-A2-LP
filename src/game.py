@@ -2,6 +2,8 @@ import pygame
 import sys
 from config import *
 from sprites import *
+from enemy import *
+from player import *
 from random import randint
 import time 
 
